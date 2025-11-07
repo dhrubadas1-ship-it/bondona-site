@@ -64,6 +64,8 @@
   // Base server for local/offline backends (OpenAI-compatible or llama.cpp)
   const API_BASE = `${window.location.origin}/v1`;
   let SERVER = window.location.origin; // do not append /v1 here
+  const IS_FILE = location.protocol === 'file:';
+const API_HOST = IS_FILE ? 'https://bondona-site-3cln.vercel.app' : '';
   window.SERVER = SERVER;
   console.log("SERVER set to:", SERVER);
 </script>
@@ -301,7 +303,7 @@ const QUIZ_STRICT_PROMPT = `You are a careful exam designer for CBSE Class 9. Ou
 async function callChat(messages, {temperature=0.05, max_tokens=700, stop=null} = {}) {
   // Prefer serverless endpoint when available (keeps keys off the client)
   if (window.USE_SERVERLESS) {
-    const res = await fetch('/api/chat', {
+    const res = await fetch(`${API_HOST}/api/chat`, {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({
