@@ -1,0 +1,5 @@
+[R1] Force & Laws of Motion — Key Points
+• 1st law (inertia): rest/uniform motion persists unless an unbalanced external force acts.
+• Momentum p = m v; Impulse = Δp.
+• 2nd law: F = ma, direction of acceleration = direction of net force.
+• 3rd law: Action–reaction equal and opposite, act on different bodies.

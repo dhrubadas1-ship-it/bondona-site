@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bondona Tutor — Chapter 5: The Fundamental Unit of Life (Tiny Explorers)</title>
+  <style>
+    :root{ --bg:#f6fbff; --card:#ffffff; --ink:#0b3b5a; --muted:#4d6b80; --accent:#26a6ff; --good:#14b86e; --bad:#ff4d6d; --ring:#d9eefb; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#e9f6ff 70%);color:var(--ink)}
+    .wrap{max-width:1100px;margin:auto;padding:20px}
+    .card{background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(13,71,161,.08);padding:20px}
+    h1{margin:0 0 6px 0}
+    .tag{display:inline-block;background:#eaf7ff;border-radius:999px;padding:4px 10px;color:#1673a6;font-size:12px}
+    .grid{display:grid;grid-template-columns: 1fr;gap:20px}
+    .speech{position:relative;background:#fff;border:2px solid #d9eefb;border-radius:18px;padding:16px;min-height:120px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(38,166,255,.24)}
+    button.ghost{background:#eaf7ff;color:#0b5a8a;box-shadow:none}
+    .muted{color:#4d6b80;font-size:13px}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff;color:#0b3b5a;font-size:12px}
+    .sim{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .panel{display:grid;grid-template-columns: 320px 1fr;gap:16px;align-items:stretch}
+    .explorer{position:relative;height:460px;border:2px dashed var(--ring);border-radius:16px;overflow:hidden;background:radial-gradient(circle at center, #ffffff 0, #f7fbff 70%);touch-action:none}
+    .viewport{position:absolute;left:0;top:0;transform-origin:0 0;cursor:grab}
+    .viewport:active{cursor:grabbing}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .side{background:#f8fcff;border:1px solid #d9eefb;border-radius:12px;padding:10px}
+    .side h4{margin:0 0 6px 0}
+    .side .row{display:grid;grid-template-columns: 1fr auto;align-items:center;gap:8px}
+    .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+    svg .org{cursor:pointer;transition:filter .2s ease}
+    svg .org:hover{filter:brightness(1.1)}
+    .quiz{margin-top:18px;background:#fff;border:2px dashed #cfeeff;border-radius:16px;padding:14px}
+    .q{margin:10px 0}
+    .phet{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    iframe.phet-embed{width:100%;height:520px;border:0;border-radius:12px}
+    .warn{background:#fffceb;border:1px solid #ffe08a;border-radius:10px;padding:10px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Chapter 5: The Fundamental Unit of Life (Cell)</h1>
+    <div class="tag">Hosted by <strong>Celly the Friendly Cell 🧫</strong></div>
+
+    <div class="grid">
+      <!-- Story -->
+      <section>
+        <div class="speech" id="speech"></div>
+        <div class="controls">
+          <button id="btnPrev" class="ghost">◁ Prev</button>
+          <button id="btnNext">Next ▷</button>
+          <button id="btnSpeak">▶ Narrate (Male)</button>
+          <span class="muted" id="lineInfo"></span>
+        </div>
+      </section>
+
+      <!-- Zoomable Cell Explorer -->
+      <section class="sim">
+        <h3>Lab: Zoom & Tap the Cell</h3>
+        <div class="panel">
+          <div class="side">
+            <div class="row"><h4>Choose Cell Type</h4>
+              <select id="cellType" style="padding:8px;border:2px solid #cfeeff;border-radius:10px;font-weight:700;color:#0b3b5a">
+                <option value="animal">Animal Cell</option>
+                <option value="plant">Plant Cell</option>
+              </select>
+            </div>
+            <div class="row" style="margin-top:8px"><span class="pill">Zoom: <span id="zoomLabel">100%</span></span>
+              <input id="zoom" type="range" min="80" max="200" value="100" step="5">
+            </div>
+            <div class="legend">
+              <span class="pill">Tap organelles → hear + learn</span>
+              <button id="btnCenter" class="ghost">🎯 Center</button>
+              <button id="btnMute" class="ghost">🔇 Mute</button>
+            </div>
+            <div class="side" id="infoBox" style="margin-top:10px">
+              <h4 id="orgName">Tap an organelle</h4>
+              <div id="orgDesc" class="muted">I will tell you what it does!</div>
+              <div class="controls" style="margin-top:8px">
+                <button id="orgSpeak" class="ghost">▶ Speak</button>
+              </div>
+            </div>
+            <div class="list">
+              <span class="pill">Nucleus</span><span class="pill">Nucleolus</span>
+              <span class="pill">Mitochondria</span><span class="pill">Ribosomes</span>
+              <span class="pill">ER (Rough/Smooth)</span><span class="pill">Golgi</span>
+              <span class="pill">Lysosome</span><span class="pill plantOnly">Chloroplast</span>
+              <span class="pill plantOnly">Cell Wall</span><span class="pill">Cell Membrane</span>
+              <span class="pill">Vacuole</span>
+            </div>
+          </div>
+
+          <div class="explorer" id="explorer">
+            <div class="viewport" id="viewport">
+              <!-- SVG cell schematic with clickable organelles -->
+              <svg id="cellSVG" viewBox="0 0 900 600" width="900" height="600" aria-label="Drawable cell diagram">
+                <defs>
+                  <radialGradient id="cyto" cx="50%" cy="50%" r="70%">
+                    <stop offset="0%" stop-color="#e6f7ff"/>
+                    <stop offset="100%" stop-color="#cfeeff"/>
+                  </radialGradient>
+                  <radialGradient id="nucleusG" cx="50%" cy="50%" r="60%">
+                    <stop offset="0%" stop-color="#ffe6f0"/>
+                    <stop offset="100%" stop-color="#ffc2d1"/>
+                  </radialGradient>
+                </defs>
+                <g id="animalLayer">
+                  <ellipse cx="450" cy="300" rx="380" ry="250" fill="url(#cyto)" stroke="#6ec1ff" stroke-width="6" class="org" data-key="membrane" tabindex="0" role="button"/>
+                </g>
+                <g id="plantLayer" style="display:none">
+                  <rect x="90" y="80" width="720" height="440" rx="40" ry="40" fill="url(#cyto)" stroke="#6ec1ff" stroke-width="6" class="org" data-key="membrane" tabindex="0" role="button"/>
+                  <rect x="70" y="60" width="760" height="480" rx="46" ry="46" fill="none" stroke="#78c77b" stroke-width="10" class="org" data-key="cellwall" tabindex="0" role="button"/>
+                </g>
+
+                <!-- Nucleus + nucleolus -->
+                <g class="org" data-key="nucleus" tabindex="0" role="button">
+                  <ellipse cx="600" cy="290" rx="120" ry="90" fill="url(#nucleusG)" stroke="#ff8fb1" stroke-width="6"/>
+                  <circle cx="600" cy="300" r="28" fill="#ff6f91" stroke="#ff3d71" stroke-width="4" class="org" data-key="nucleolus" tabindex="0" role="button"/>
+                </g>
+
+                <!-- Mitochondria -->
+                <g class="org" data-key="mitochondria" tabindex="0" role="button">
+                  <ellipse cx="320" cy="360" rx="70" ry="32" fill="#ffd6a5" stroke="#ffab40" stroke-width="5"/>
+                  <path d="M270 360 Q320 330 370 360 Q320 390 270 360 Z" fill="none" stroke="#ff8a00" stroke-width="3"/>
+                </g>
+
+                <!-- Rough ER -->
+                <g class="org" data-key="rer" tabindex="0" role="button">
+                  <path d="M480 220 q -40 20 -80 0 q -40 -20 -80 0 q -40 20 -80 0" fill="none" stroke="#9ad0ff" stroke-width="12"/>
+                  <g fill="#0b3b5a">
+                    <circle cx="470" cy="215" r="4"/><circle cx="440" cy="205" r="4"/><circle cx="410" cy="212" r="4"/>
+                    <circle cx="380" cy="205" r="4"/><circle cx="350" cy="212" r="4"/><circle cx="320" cy="205" r="4"/>
+                  </g>
+                </g>
+
+                <!-- Smooth ER -->
+                <g class="org" data-key="ser" tabindex="0" role="button">
+                  <path d="M520 370 q -50 -20 -100 0 q -50 20 -100 0" fill="none" stroke="#b7e4ff" stroke-width="12"/>
+                </g>
+
+                <!-- Golgi -->
+                <g class="org" data-key="golgi" tabindex="0" role="button">
+                  <path d="M620 380 q 60 -20 120 0 q -40 22 -120 22 q -30 -8 0 -22" fill="#ffeaa7" stroke="#f6c453" stroke-width="5"/>
+                  <path d="M630 410 q 60 -20 120 0 q -40 22 -120 22 q -30 -8 0 -22" fill="#ffeaa7" stroke="#f6c453" stroke-width="5"/>
+                  <path d="M640 440 q 60 -20 120 0 q -40 22 -120 22 q -30 -8 0 -22" fill="#ffeaa7" stroke="#f6c453" stroke-width="5"/>
+                </g>
+
+                <!-- Lysosome -->
+                <circle cx="510" cy="460" r="20" fill="#fdb2b2" stroke="#ff6b6b" stroke-width="5" class="org" data-key="lysosome" tabindex="0" role="button"/>
+
+                <!-- Ribosomes small dots -->
+                <g class="org" data-key="ribosome" tabindex="0" role="button">
+                  <circle cx="250" cy="250" r="6" fill="#0b3b5a"/>
+                  <circle cx="280" cy="280" r="6" fill="#0b3b5a"/>
+                  <circle cx="300" cy="240" r="6" fill="#0b3b5a"/>
+                </g>
+
+                <!-- Vacuole (big) -->
+                <ellipse cx="230" cy="330" rx="90" ry="60" fill="#e8fff6" stroke="#7ad9a5" stroke-width="6" class="org" data-key="vacuole" tabindex="0" role="button"/>
+
+                <!-- Chloroplast (plant only) -->
+                <g class="org plantOnly" data-key="chloroplast" tabindex="0" role="button">
+                  <ellipse cx="740" cy="220" rx="70" ry="36" fill="#b9f6ca" stroke="#4caf50" stroke-width="6"/>
+                  <path d="M690 220 q 50 -20 100 0 q -50 20 -100 0 Z" fill="none" stroke="#2e7d32" stroke-width="3"/>
+                </g>
+
+              </svg>
+            </div>
+          </div>
+        </div>
+        <p class="muted">Tip: Use the slider to zoom. Drag the picture to pan. Tap an organelle to learn what it does. Switch to <b>Plant Cell</b> to see chloroplasts and a cell wall.</p>
+      </section>
+
+      <!-- PhET HTML5 Embed (web) -->
+      <section class="phet">
+        <h3>Interactive: PhET — Membrane Channels (HTML5)</h3>
+        <iframe
+          class="phet-embed"
+          title="PhET Membrane Channels"
+          src="https://phet.colorado.edu/sims/html/membrane-channels/latest/membrane-channels_en.html"
+          allow="fullscreen"
+        ></iframe>
+        <div class="warn" style="margin-top:10px">For offline use, download the HTML5 sim folder and set the iframe <code>src</code> to your local path, e.g. <code>src="../phet/membrane-channels_en.html"</code>.</div>
+      </section>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz"></section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// Story lines (5–10 yrs)
+// ----------------------
+const LINES = [
+  "Hello! I’m Celly the Friendly Cell. I am tiny but I do big jobs!",
+  "All living things are made of cells — some have one cell, some have many.",
+  "Cells have parts called organelles. Each part has a special job.",
+  "The cell membrane is a soft skin that lets good things in and keeps bad things out.",
+  "In plant cells, a strong cell wall gives extra support from the outside.",
+  "The nucleus is like the boss room. Inside it, DNA has the plans for the cell.",
+  "The nucleolus helps make ribosomes — little protein factories.",
+  "Mitochondria are power houses. They make energy for the cell to work.",
+  "The ER (rough and smooth) is a road and workshop for making and moving things.",
+  "The Golgi body packs and sends things like a post office.",
+  "Lysosomes are cleanup crews that break down waste.",
+  "Ribosomes build proteins — tiny workers reading the plan.",
+  "Vacuoles store water and food. Plant cells have a big central vacuole.",
+  "Chloroplasts (in plant cells) use sunlight to make food — photosynthesis!",
+  "Let’s explore the cell by tapping each organelle!"
+];
+
+// ----------------------
+// Quiz bank
+// ----------------------
+const QUIZ = [
+  {q:"Which part is the soft skin of the cell?",a:["Nucleus","Cell membrane","Golgi"],correct:1},
+  {q:"Which part is only in plant cells?",a:["Chloroplast","Mitochondria","Ribosome"],correct:0},
+  {q:"Mitochondria make…",a:["Sugar from sunlight","Energy for work","DNA"],correct:1},
+  {q:"Ribosomes help make…",a:["Proteins","Water","Sunlight"],correct:0},
+  {q:"The big store room in plant cells is the…",a:["Lysosome","Vacuole","Nucleolus"],correct:1}
+];
+
+// ----------------------
+// TTS (male-preferred)
+// ----------------------
+let currentIdx = 0; let voices = []; let muted=false;
+const speechBox = document.getElementById('speech');
+const lineInfo = document.getElementById('lineInfo');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+const btnMute = document.getElementById('btnMute');
+function renderLine(){ speechBox.textContent = LINES[currentIdx]; lineInfo.textContent = `Line ${currentIdx+1} of ${LINES.length}`; }
+function loadVoices(){ try{ voices = window.speechSynthesis.getVoices(); }catch(e){ voices = []; } }
+function pickMaleVoice(){ if(!voices.length) return null; const pref=/(male|daniel|george|brian|english male|barry|david|microsoft|google uk)/i; const en=v=>/en/i.test(v.lang); return voices.find(v=>pref.test(v.name+" "+v.lang)&&en(v))||voices.find(en)||voices[0]; }
+function speak(text){ if(muted) return; if(!('speechSynthesis' in window)) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); loadVoices(); const v=pickMaleVoice(); if(v) u.voice=v; u.pitch=0.95; u.rate=0.98; window.speechSynthesis.speak(u);}catch(e){} }
+if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=()=>{ loadVoices(); }; }
+btnSpeak.addEventListener('click', ()=>{ speak(LINES[currentIdx]); });
+btnNext.addEventListener('click', ()=>{ if(currentIdx<LINES.length-1){ currentIdx++; renderLine(); } });
+btnPrev.addEventListener('click', ()=>{ if(currentIdx>0){ currentIdx--; renderLine(); } });
+btnMute.addEventListener('click', ()=>{ muted=!muted; btnMute.textContent = muted? '🔊 Unmute' : '🔇 Mute'; });
+
+// ----------------------
+// Build Quiz
+// ----------------------
+const qz = document.getElementById('quiz');
+function buildQuiz(){
+  let html = '<h3>Quiz Time! 🎉</h3>';
+  QUIZ.forEach((item,i)=>{
+    html += `<div class=\"q\"><b>${i+1}. ${item.q}</b><div>`;
+    item.a.forEach((opt,j)=>{
+      html += `<label style=\"display:block;margin:.25rem 0\"><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`;
+    });
+    html += '</div></div>';
+  });
+  html += `<div class='controls'><button id='btnCheck' class='good'>Check Answers</button><button id='btnReset' class='ghost'>Reset</button><span id='result' class='muted'></span></div>`;
+  qz.innerHTML = html;
+  document.getElementById('btnCheck').addEventListener('click', checkQuiz);
+  document.getElementById('btnReset').addEventListener('click', ()=>{ qz.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false); document.getElementById('result').textContent=''; });
+}
+function checkQuiz(){ let score=0; let answered=0; QUIZ.forEach((item,i)=>{ const chosen=qz.querySelector(`input[name='q${i}']:checked`); if(chosen){answered++; if(Number(chosen.value)===item.correct) score++;} }); const r=document.getElementById('result'); if(answered<QUIZ.length){ r.textContent='Pick an answer for each question.'; return; } r.textContent=(score===QUIZ.length)?'🌟 Perfect! You are a Tiny Science Explorer!':`Nice! You got ${score} of ${QUIZ.length}.`; }
+
+// ----------------------
+// Cell Explorer (pan, zoom, tap) — fixed for reliable taps
+// ----------------------
+const explorer = document.getElementById('explorer');
+const viewport = document.getElementById('viewport');
+const zoom = document.getElementById('zoom');
+const zoomLabel = document.getElementById('zoomLabel');
+const btnCenter = document.getElementById('btnCenter');
+const orgName = document.getElementById('orgName');
+const orgDesc = document.getElementById('orgDesc');
+const orgSpeak = document.getElementById('orgSpeak');
+const cellType = document.getElementById('cellType');
+const svg = document.getElementById('cellSVG');
+
+let pan = {x:0,y:0}; let scale = 1;
+function applyTransform(){ viewport.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${scale})`; }
+zoom.addEventListener('input', ()=>{ scale = Number(zoom.value)/100; zoomLabel.textContent = `${zoom.value}%`; applyTransform(); });
+btnCenter.addEventListener('click', ()=>{ pan.x = (explorer.clientWidth-900*scale)/2; pan.y = (explorer.clientHeight-600*scale)/2; applyTransform(); });
+window.addEventListener('resize', ()=> btnCenter.click());
+
+// Only pan when background is dragged (not when clicking an organelle)
+let panning=false, moved=false, sx=0, sy=0, ox=0, oy=0;
+explorer.addEventListener('pointerdown', e=>{
+  if(e.target.closest('.org')) return; // let organelle clicks pass through
+  panning=true; moved=false; sx=e.clientX; sy=e.clientY; ox=pan.x; oy=pan.y; explorer.setPointerCapture(e.pointerId);
+});
+explorer.addEventListener('pointermove', e=>{
+  if(!panning) return; const dx=e.clientX-sx, dy=e.clientY-sy; if(Math.hypot(dx,dy)>4) moved=true; pan.x = ox + dx; pan.y = oy + dy; applyTransform();
+});
+explorer.addEventListener('pointerup', e=>{ if(panning){ explorer.releasePointerCapture(e.pointerId); } panning=false; });
+
+// Make taps work even if elements are added later
+svg.addEventListener('click', e=>{
+  const t = e.target.closest('.org'); if(!t) return; const key=t.getAttribute('data-key'); chooseOrg(key);
+});
+svg.addEventListener('keydown', e=>{
+  if(e.key==='Enter' || e.key===' '){ const t=e.target.closest('.org'); if(t){ e.preventDefault(); chooseOrg(t.getAttribute('data-key')); } }
+});
+
+// Organelle info
+const INFO = {
+  membrane:{name:'Cell Membrane', desc:'Soft skin of the cell. Lets good things in and keeps bad things out.'},
+  cellwall:{name:'Cell Wall (Plant only)', desc:'Strong wall outside the membrane. Gives shape and support.'},
+  nucleus:{name:'Nucleus', desc:'Boss room with DNA. Tells the cell what to do.'},
+  nucleolus:{name:'Nucleolus', desc:'Helper inside nucleus. Makes ribosomes.'},
+  mitochondria:{name:'Mitochondria', desc:'Power house. Makes energy for the cell to work.'},
+  rer:{name:'Rough ER', desc:'Road + workshop with ribosomes. Helps make and move proteins.'},
+  ser:{name:'Smooth ER', desc:'Road without ribosomes. Makes fats and helps detox.'},
+  golgi:{name:'Golgi Body', desc:'Packing & post office. Packs and sends things.'},
+  lysosome:{name:'Lysosome', desc:'Clean-up crew. Breaks down waste.'},
+  ribosome:{name:'Ribosome', desc:'Protein maker. Tiny worker that builds proteins.'},
+  vacuole:{name:'Vacuole', desc:'Storage room. Plant cells have a big central one.'},
+  chloroplast:{name:'Chloroplast (Plant only)', desc:'Green kitchen. Uses sunlight to make food — photosynthesis.'}
+};
+
+function chooseOrg(key){
+  const data = INFO[key]; if(!data) return;
+  orgName.textContent = data.name; orgDesc.textContent = data.desc; speak(`${data.name}. ${data.desc}`);
+}
+
+orgSpeak.addEventListener('click', ()=>{ if(orgName.textContent && orgDesc.textContent){ speak(`${orgName.textContent}. ${orgDesc.textContent}`); } });
+
+cellType.addEventListener('change', ()=>{
+  const plant = cellType.value === 'plant';
+  document.getElementById('animalLayer').style.display = plant ? 'none' : 'block';
+  document.getElementById('plantLayer').style.display  = plant ? 'block' : 'none';
+  svg.querySelectorAll('.plantOnly').forEach(el=>{ el.style.display = plant ? 'block' : 'none'; });
+});
+
+// ----------------------
+// Init after load
+// ----------------------
+window.addEventListener('load', ()=>{ renderLine(); buildQuiz(); btnCenter.click(); cellType.dispatchEvent(new Event('change')); });
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+[R1] Structure of the Atom — Key Points
+• Thomson: positive sphere with embedded electrons (obsolete).
+• Rutherford: small dense nucleus, electrons orbit; most α pass through → atom mostly empty.
+• Bohr: electrons in fixed shells; 2n^2 capacity; valency depends on outer shell.
+• Z (atomic number) = p+ = e− (*neutral atom*); A (mass number) = p+ + n0.
+• Isotopes: same Z, diff A (e.g., C-12, C-14). Isobars: same A, diff Z (e.g., 40Ar, 40Ca).

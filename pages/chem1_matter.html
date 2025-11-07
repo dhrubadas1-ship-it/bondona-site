@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bondona Tutor — Chapter 1: Matter in Our Surroundings (Tiny Explorers)</title>
+  <style>
+    :root{ --bg:#f6fbff; --card:#ffffff; --ink:#0b3b5a; --muted:#4d6b80; --accent:#26a6ff; --good:#14b86e; --bad:#ff4d6d; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#e9f6ff 70%);color:var(--ink)}
+    .wrap{max-width:1000px;margin:auto;padding:20px}
+    .card{background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(13,71,161,.08);padding:20px}
+    h1{margin:0 0 6px 0}
+    .tag{display:inline-block;background:#eaf7ff;border-radius:999px;padding:4px 10px;color:#1673a6;font-size:12px}
+    .grid{display:grid;grid-template-columns: 1fr;gap:20px}
+    .speech{position:relative;background:#fff;border:2px solid #d9eefb;border-radius:18px;padding:16px;min-height:120px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(38,166,255,.24)}
+    button.ghost{background:#eaf7ff;color:#0b5a8a;box-shadow:none}
+    .muted{color:var(--muted);font-size:13px}
+    .quiz{margin-top:18px;background:#fff;border:2px dashed #cfeeff;border-radius:16px;padding:14px}
+    .q{margin:10px 0}
+    .sim{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .sim .panel{display:grid;grid-template-columns: 260px 1fr;gap:16px;align-items:center}
+    .box{position:relative;height:220px;border-radius:14px;border:2px dashed #cfeeff;overflow:hidden}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff;color:#0b5a8a;font-size:12px}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Chapter 1: Matter in Our Surroundings</h1>
+    <div class="tag">Hosted by <strong>Droppy the Water Drop 💧</strong></div>
+
+    <div class="grid">
+      <!-- Story -->
+      <section>
+        <div class="speech" id="speech"></div>
+        <div class="controls">
+          <button id="btnPrev" class="ghost">◁ Prev</button>
+          <button id="btnNext">Next ▷</button>
+          <button id="btnSpeak">▶ Narrate (Male)</button>
+          <span class="muted" id="lineInfo"></span>
+        </div>
+      </section>
+
+      <!-- Simulator -->
+      <section class="sim">
+        <h3>Lab: Change-of-State Simulator</h3>
+        <div class="panel">
+          <div>
+            <label class="pill">Temperature: <span id="tempVal">25</span> °C</label>
+            <input id="temp" type="range" min="-40" max="120" value="25" step="1" style="width:100%">
+            <label class="pill" style="margin-top:8px;display:inline-block">Pressure: <span id="pressVal">1.0</span> atm</label>
+            <input id="press" type="range" min="0.5" max="5" value="1" step="0.1" style="width:100%">
+            <div class="legend">
+              <span class="pill" id="statePill">State: Liquid</span>
+              <span class="pill" id="explainPill">Reason: medium hugs + flowing</span>
+            </div>
+          </div>
+          <div class="box" id="box" aria-label="Particle box for simulation"></div>
+        </div>
+        <p class="muted">Try it: slide temperature down to **below 0°C** to freeze (solid). Slide above **100°C** at 1 atm to boil (gas). Increase pressure to liquefy again.</p>
+      </section>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz"></section>
+    </div>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// Story lines (5–10 yrs)
+// ----------------------
+const LINES = [
+  "Hello! I’m Droppy the Water Drop. I love splashing, freezing, and flying as steam! Let’s explore how I and my friends change.",
+  "Everything around you — toys, air, your food — is made of something called matter. Matter is the stuff that makes our world!",
+  "All matter is made of tiny invisible bits called particles. They are so small you need a microscope to see them!",
+  "These tiny particles are always moving. That’s why you can smell food from the kitchen even in another room!",
+  "There is space between particles. Water can hide sugar in these spaces — that’s dissolving!",
+  "Particles hold each other like hugs. Strong hugs make things hard; weak hugs make things flow.",
+  "Matter has three main teams: Solid Sam (keeps shape), Liquid Lily (flows and takes the cup’s shape), and Gassy Gogo (fills the whole room).",
+  "We can change the team by heating or cooling. Warmth melts ice to water. More heat makes water boil into steam — vaporization!",
+  "Cooling steam gives water drops — condensation. Cooling water below 0°C makes ice — freezing. Warming ice makes water — melting.",
+  "Some solids jump straight to gas. That trick is called sublimation (like camphor or dry ice).",
+  "During melting or boiling, some heat hides inside without raising the thermometer — that hidden energy is latent heat.",
+  "We measure hotness with Celsius (°C). Water freezes at 0°C and boils at 100°C (at sea level). Scientists also use Kelvin (K): 0°C = 273 K.",
+  "Evaporation is slow drying from the surface. It’s faster with heat, wind, and big surface. It cools us when sweat dries.",
+  "We can also change state by pressing hard. Squeezing a gas in a cylinder can turn it into a liquid.",
+  "Two special states: Plasma (glowing gas in lightning and tubes) and BEC (super-cold crowd acting as one!).",
+  "Great job! You now know how matter moves, hugs, and changes costumes!"
+];
+
+// ----------------------
+// Quiz bank
+// ----------------------
+const QUIZ = [
+  {q:"What are all things around us made of?",a:["Music","Matter","Magic"],correct:1},
+  {q:"What are the tiny building bits of matter called?",a:["Pebbles","Particles","Bubbles"],correct:1},
+  {q:"Which state keeps a fixed shape?",a:["Liquid Lily","Gassy Gogo","Solid Sam"],correct:2},
+  {q:"Boiling water turns into…",a:["Steam","Ice","Stones"],correct:0},
+  {q:"Hidden heat during melting/boiling is called…",a:["Latent heat","Spicy heat","Sunny heat"],correct:0},
+  {q:"0°C equals how many Kelvin?",a:["0 K","100 K","273 K"],correct:2},
+  {q:"Evaporation gets faster with…",a:["Heat and wind","Cold and no air","Adding stones"],correct:0},
+  {q:"Squeezing a gas hard can turn it into…",a:["A liquid","A rock","Sunlight"],correct:0}
+];
+
+// ----------------------
+// TTS (male-preferred)
+// ----------------------
+let currentIdx = 0;
+let voices = [];
+const speechBox = document.getElementById('speech');
+const lineInfo = document.getElementById('lineInfo');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+
+function renderLine(){
+  speechBox.textContent = LINES[currentIdx];
+  lineInfo.textContent = `Line ${currentIdx+1} of ${LINES.length}`;
+}
+
+function loadVoices(){
+  try{ voices = window.speechSynthesis.getVoices(); }catch(e){ voices = []; }
+}
+
+function pickMaleVoice(){
+  if(!voices || !voices.length) return null;
+  const prefNames = /(male|daniel|george|brian|english male|barry|david|microsoft|google uk)/i;
+  const english = v=>/en/i.test(v.lang);
+  return voices.find(v=>prefNames.test(v.name+" "+v.lang) && english(v)) || voices.find(english) || voices[0];
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    loadVoices();
+    const v = pickMaleVoice();
+    if(v) u.voice = v;
+    u.pitch = 0.95; // slightly lower
+    u.rate = 0.98;  // comfy pace for kids
+    window.speechSynthesis.speak(u);
+  }catch(e){ /* ignore */ }
+}
+
+if('speechSynthesis' in window){
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = ()=>{ loadVoices(); };
+}
+
+btnSpeak.addEventListener('click', ()=>{ speak(LINES[currentIdx]); }); // requires user gesture
+btnNext.addEventListener('click', ()=>{ if(currentIdx<LINES.length-1){ currentIdx++; renderLine(); } });
+btnPrev.addEventListener('click', ()=>{ if(currentIdx>0){ currentIdx--; renderLine(); } });
+
+renderLine();
+
+// ----------------------
+// Build Quiz
+// ----------------------
+const qz = document.getElementById('quiz');
+function buildQuiz(){
+  let html = '<h3>Quiz Time! 🎉</h3>';
+  QUIZ.forEach((item,i)=>{
+    html += `<div class="q"><b>${i+1}. ${item.q}</b><div>`;
+    item.a.forEach((opt,j)=>{
+      html += `<label style="display:block;margin:.25rem 0"><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`;
+    });
+    html += '</div></div>'; 
+  });
+  html += `<div class='controls'><button id='btnCheck' class='good'>Check Answers</button><button id='btnReset' class='ghost'>Reset</button><span id='result' class='muted'></span></div>`;
+  qz.innerHTML = html;
+  document.getElementById('btnCheck').addEventListener('click', checkQuiz);
+  document.getElementById('btnReset').addEventListener('click', ()=>{ qz.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false); document.getElementById('result').textContent=''; });
+}
+
+function checkQuiz(){
+  let score = 0; let answered = 0;
+  QUIZ.forEach((item,i)=>{
+    const chosen = qz.querySelector(`input[name='q${i}']:checked`);
+    if(chosen){ answered++; if(Number(chosen.value)===item.correct) score++; }
+  });
+  const r = document.getElementById('result');
+  if(answered < QUIZ.length){ r.textContent = 'Pick an answer for each question.'; return; }
+  r.textContent = (score===QUIZ.length) ? '🌟 Perfect! You are a Tiny Science Explorer!' : `Nice! You got ${score} of ${QUIZ.length}.`;
+}
+
+buildQuiz();
+
+// ----------------------
+// Simple Particle Simulator
+// ----------------------
+const box = document.getElementById('box');
+const temp = document.getElementById('temp');
+const tempVal = document.getElementById('tempVal');
+const press = document.getElementById('press');
+const pressVal = document.getElementById('pressVal');
+const statePill = document.getElementById('statePill');
+const explainPill = document.getElementById('explainPill');
+
+let particles = [];
+const N = 20;
+
+function makeParticle(){
+  const d = document.createElement('div');
+  d.style.position='absolute';
+  d.style.width=d.style.height='10px';
+  d.style.borderRadius='50%';
+  d.style.background='#26a6ff';
+  d.style.opacity='0.9';
+  box.appendChild(d);
+  return {el:d, x: Math.random()*(box.clientWidth-12)+6, y: Math.random()*(box.clientHeight-12)+6, vx: (Math.random()*2-1), vy:(Math.random()*2-1)};
+}
+
+function resetParticles(){
+  box.innerHTML='';
+  particles = Array.from({length:N}, makeParticle);
+}
+
+function getState(T,P){
+  // Very simplified water-like model
+  const boil = 100 * P; // raise boiling point with pressure (simple)
+  const freeze = 0 - (P>1? (P-1)*2 : 0); // tiny change with pressure
+  if(T < freeze) return 'Solid';
+  if(T >= boil) return 'Gas';
+  return 'Liquid';
+}
+
+function updateLabels(T,P,state){
+  tempVal.textContent = T;
+  pressVal.textContent = Number(P).toFixed(1);
+  statePill.textContent = `State: ${state}`;
+  if(state==='Solid') explainPill.textContent = 'Reason: strong hugs + tiny wiggles';
+  if(state==='Liquid') explainPill.textContent = 'Reason: medium hugs + flowing';
+  if(state==='Gas') explainPill.textContent = 'Reason: weak hugs + zooming';
+}
+
+function tick(){
+  const T = Number(temp.value);
+  const P = Number(press.value);
+  const state = getState(T,P);
+  updateLabels(T,P,state);
+
+  // Speed and spacing by state
+  let speed, radius;
+  if(state==='Solid'){ speed = 0.3; radius = 6; }
+  else if(state==='Liquid'){ speed = 0.9; radius = 10; }
+  else { speed = 1.8; radius = 12; }
+
+  particles.forEach(p=>{
+    p.vx += (Math.random()-0.5)*0.05; // jitter
+    p.vy += (Math.random()-0.5)*0.05;
+    const max = speed;
+    p.vx = Math.max(-max, Math.min(max, p.vx));
+    p.vy = Math.max(-max, Math.min(max, p.vy));
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < radius){ p.x = radius; p.vx*=-1; }
+    if(p.y < radius){ p.y = radius; p.vy*=-1; }
+    if(p.x > box.clientWidth-radius){ p.x = box.clientWidth-radius; p.vx*=-1; }
+    if(p.y > box.clientHeight-radius){ p.y = box.clientHeight-radius; p.vy*=-1; }
+    p.el.style.transform = `translate(${p.x-radius}px, ${p.y-radius}px)`;
+  });
+  requestAnimationFrame(tick);
+}
+
+temp.addEventListener('input', ()=>updateLabels(Number(temp.value), Number(press.value), getState(Number(temp.value), Number(press.value))));
+press.addEventListener('input', ()=>updateLabels(Number(temp.value), Number(press.value), getState(Number(temp.value), Number(press.value))));
+
+resetParticles();
+updateLabels(Number(temp.value), Number(press.value), getState(Number(temp.value), Number(press.value)));
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

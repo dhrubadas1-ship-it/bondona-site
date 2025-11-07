@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bondona Tutor — Bio12: Strategies for Enhancement in Food Production</title>
+  <style>
+    :root{ --bg:#f6fbff; --card:#ffffff; --ink:#0b3b5a; --muted:#4d6b80; --accent:#26a6ff; --good:#14b86e; --bad:#ff4d6d; --ring:#d9eefb; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#e9f6ff 70%);color:var(--ink)}
+    .wrap{max-width:1100px;margin:auto;padding:20px}
+    .card{background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(13,71,161,.08);padding:20px}
+    h1{margin:0 0 6px 0}
+    .tag{display:inline-block;background:#eaf7ff;border-radius:999px;padding:4px 10px;color:#1673a6;font-size:12px}
+    .grid{display:grid;grid-template-columns: 1fr;gap:20px}
+    .speech{position:relative;background:#fff;border:2px solid #d9eefb;border-radius:18px;padding:16px;min-height:120px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(38,166,255,.24)}
+    button.ghost{background:#eaf7ff;color:#0b5a8a;box-shadow:none}
+    .muted{color:#4d6b80;font-size:13px}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff;color:#0b3b5a;font-size:12px}
+    .sim{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .panel{display:grid;grid-template-columns: 320px 1fr;gap:16px;align-items:stretch}
+    .explorer{position:relative;height:480px;border:2px dashed var(--ring);border-radius:16px;overflow:hidden;background:radial-gradient(circle at center, #ffffff 0, #f7fbff 70%)}
+    .viewport{position:absolute;left:0;top:0;transform-origin:0 0;cursor:grab;will-change:transform;backface-visibility:hidden;transform:translateZ(0)}
+    .viewport:active{cursor:grabbing}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .side{background:#f8fcff;border:1px solid #d9eefb;border-radius:12px;padding:10px}
+    .side h4{margin:0 0 6px 0}
+    .side .row{display:grid;grid-template-columns: 1fr auto;align-items:center;gap:8px}
+    .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+    svg *{vector-effect:non-scaling-stroke;shape-rendering:geometricPrecision}
+    svg .org{cursor:pointer;transition:filter .2s ease}
+    svg .org:hover{filter:brightness(1.08)}
+    .quiz{margin-top:18px;background:#fff;border:2px dashed #cfeeff;border-radius:16px;padding:14px}
+    .q{margin:10px 0}
+    .phet{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .phet-frame{position:relative;width:100%;height:560px;border-radius:12px;overflow:hidden}
+    iframe.phet-embed{width:100%;height:100%;border:0;display:block}
+    .warn{background:#fffceb;border:1px solid #ffe08a;border-radius:10px;padding:10px}
+    .pulse{position:relative}
+    .pulse::after{content:"";position:absolute;inset:-8px;border:2px solid #cfeeff;border-radius:999px;opacity:.6;animation:pulse 1.8s ease-out infinite}
+    @keyframes pulse{0%{transform:scale(.85);opacity:.6}70%{transform:scale(1.15);opacity:0}100%{transform:scale(1.15);opacity:0}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Bio12: Strategies for Enhancement in Food Production</h1>
+    <div class="tag">Plant breeding • Animal husbandry • SCP • Tissue culture • Aquaculture • Apiculture</div>
+
+    <div class="grid">
+      <!-- Story / Overview -->
+      <section>
+        <div class="speech" id="speech"></div>
+        <div class="controls">
+          <button id="btnPrev" class="ghost">◁ Prev</button>
+          <button id="btnNext">Next ▷</button>
+          <button id="btnEnable" class="ghost">🔊 Enable Audio</button>
+          <button id="btnSpeak">▶ Narrate (Male)</button>
+          <span class="muted" id="lineInfo"></span>
+        </div>
+      </section>
+
+      <!-- Zoomable Explorer -->
+      <section class="sim">
+        <h3>Lab: Food Production Explorer</h3>
+        <div class="panel">
+          <div class="side">
+            <div class="row"><h4>Choose Board</h4>
+              <select id="boardType" style="padding:8px;border:2px solid #cfeeff;border-radius:10px;font-weight:700;color:#0b3b5a">
+                <option value="plant">Plant Breeding</option>
+                <option value="animal">Animal Husbandry</option>
+                <option value="biotech">Biotech Add‑ons</option>
+                <option value="culture">Tissue Culture</option>
+                <option value="aqua">Aquaculture & Apiculture</option>
+              </select>
+            </div>
+            <div class="row" style="margin-top:8px"><span class="pill">Zoom: <span id="zoomLabel">100%</span></span>
+              <input id="zoom" type="range" min="80" max="200" value="100" step="5">
+            </div>
+            <div class="legend">
+              <span class="pill">Tap items → hear + learn</span>
+              <button id="btnCenter" class="ghost">🎯 Center</button>
+              <button id="btnMute" class="ghost">🔇 Mute</button>
+            </div>
+            <div class="side" id="infoBox" style="margin-top:10px">
+              <h4 id="orgName">Tap an item</h4>
+              <div id="orgDesc" class="muted">I will tell you what it does!</div>
+              <div class="controls" style="margin-top:8px">
+                <button id="orgSpeak" class="ghost">▶ Speak</button>
+              </div>
+            </div>
+
+            <div class="list" id="legendList"></div>
+          </div>
+
+          <div class="explorer" id="explorer">
+            <div class="viewport" id="viewport">
+              <svg id="boardSVG" viewBox="0 0 1100 760" width="1100" height="760" aria-label="Food production boards"></svg>
+            </div>
+          </div>
+        </div>
+        <p class="muted">Tip: Use the slider to zoom. Drag the background to pan. Tap a card to hear and learn. Switch boards from the dropdown.</p>
+      </section>
+
+      <!-- Interactive placeholder (swap with local HTML when offline) -->
+      <section class="phet">
+        <h3>Interactive: Breeding & Yield — Demo (Placeholder)</h3>
+        <div class="phet-frame">
+          <iframe id="demoFrame" class="phet-embed" title="Yield demo" srcdoc='<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:system-ui;margin:0;padding:16px;color:#0b3b5a;background:#fff} .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap} .card{border:1px solid #cfeeff;border-radius:12px;padding:12px;margin-top:10px} input[type=range]{width:220px} .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff} </style></head><body><h3>Simple Yield Estimator</h3><div class="row"><label>Hybrid vigour (0–40%): <input id="vig" type="range" min="0" max="40" value="10"></label><span class="pill" id="vigv">10%</span></div><div class="row"><label>Disease resistance (0–30%): <input id="dis" type="range" min="0" max="30" value="10"></label><span class="pill" id="disv">10%</span></div><div class="row"><label>Management boost (0–20%): <input id="man" type="range" min="0" max="20" value="5"></label><span class="pill" id="manv">5%</span></div><div class="card"><b>Base yield:</b> 3.0 t/ha → <b id="out">3.0</b> t/ha</div><script>const b=3.0; const $=id=>document.getElementById(id); function upd(){const v=+$("vig").value; const d=+$("dis").value; const m=+$("man").value; $("vigv").textContent=v+"%"; $("disv").textContent=d+"%"; $("manv").textContent=m+"%"; const y=b*(1+v/100)*(1+d/100)*(1+m/100); $("out").textContent=y.toFixed(2);} ["vig","dis","man"].forEach(id=>$(id).addEventListener("input",upd)); upd();</script></body></html>'></iframe>
+        </div>
+        <div class="warn" style="margin-top:10px">Replace this with your local HTML interactive if needed.</div>
+      </section>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz"></section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// Story lines
+// ----------------------
+const LINES = [
+  "Food production increases by improving crops and animals — through breeding, management, and biotech.",
+  "Plant breeding raises yield and quality using selection, hybridisation, and resistance breeding.",
+  "Animal husbandry covers dairy, poultry, fisheries, and beekeeping to boost nutrition and income.",
+  "Biotech adds tools like marker-assisted selection, single-cell protein, and transgenics.",
+  "Tissue culture enables micropropagation and creation of disease-free, uniform plants."
+];
+
+// ----------------------
+// Quiz bank
+// ----------------------
+const QUIZ = [
+  {q:"First step in a typical plant breeding program?",a:["Release of variety","Evaluation of superior hybrids","Collection of genetic variability"],correct:2},
+  {q:"Artificial hybridisation requires…",a:["Male sterility or emasculation + bagging","Only open pollination","Cloning"],correct:0},
+  {q:"SCP (Single-Cell Protein) is obtained from…",a:["Plant leaves","Microbes like Spirulina","Fish muscle"],correct:1},
+  {q:"Honey bee species widely used in India for apiculture:",a:["Apis dorsata","Apis mellifera","Bombus terrestris"],correct:1},
+  {q:"Disease-free plantlets quickly in large numbers are produced by…",a:["Micropropagation","Somatic fusion","Conventional selection"],correct:0}
+];
+
+// ----------------------
+// TTS (male-preferred)
+// ----------------------
+let currentIdx = 0; let voices = []; let muted=false; let audioEnabled=false;
+const speechBox = document.getElementById('speech');
+const lineInfo = document.getElementById('lineInfo');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+const btnMute = document.getElementById('btnMute');
+const btnEnable = document.getElementById('btnEnable');
+
+function renderLine(){ speechBox.textContent = LINES[currentIdx]; lineInfo.textContent = `Line ${currentIdx+1} of ${LINES.length}`; }
+function loadVoices(){ try{ voices = window.speechSynthesis.getVoices(); }catch(e){ voices = []; } }
+function pickMaleVoice(){
+  if(!voices.length) return null;
+  const pref=/(male|daniel|george|brian|english male|barry|david|microsoft|google uk|alex)/i;
+  const en=v=>/en/i.test(v.lang||"");
+  return voices.find(v=>pref.test((v.name||"")+" "+(v.lang||""))&&en(v)) || voices.find(en) || voices[0];
+}
+function speak(text){
+  if(muted || !audioEnabled) return; if(!('speechSynthesis' in window)) return;
+  try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); loadVoices(); const v=pickMaleVoice(); if(v) u.voice=v; u.pitch=1.0; u.rate=1.03; window.speechSynthesis.speak(u);}catch(e){}
+}
+if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=()=>{ loadVoices(); }; }
+
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && audioEnabled){ loadVoices(); }});
+btnEnable.addEventListener('click', ()=>{ audioEnabled = true; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance("Audio enabled."); const v=pickMaleVoice(); if(v) u.voice=v; window.speechSynthesis.speak(u);}catch(e){} btnEnable.textContent = "✅ Audio On"; });
+btnSpeak.addEventListener('click', ()=>{ speak(LINES[currentIdx]); });
+btnNext.addEventListener('click', ()=>{ if(currentIdx<LINES.length-1){ currentIdx++; renderLine(); } });
+btnPrev.addEventListener('click', ()=>{ if(currentIdx>0){ currentIdx--; renderLine(); } });
+btnMute.addEventListener('click', ()=>{ muted=!muted; btnMute.textContent = muted? '🔊 Unmute' : '🔇 Mute'; if(muted){ try{ window.speechSynthesis.cancel(); }catch(e){} } });
+
+// ----------------------
+// Build Quiz
+// ----------------------
+const qz = document.getElementById('quiz');
+function buildQuiz(){
+  let html = '<h3>Quiz Time! 🎉</h3>';
+  QUIZ.forEach((item,i)=>{
+    html += `<div class="q"><b>${i+1}. ${item.q}</b><div>`;
+    item.a.forEach((opt,j)=>{ html += `<label style="display:block;margin:.25rem 0"><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`; });
+    html += '</div></div>';
+  });
+  html += `<div class='controls'><button id='btnCheck' class='good'>Check Answers</button><button id='btnReset' class='ghost'>Reset</button><span id='result' class='muted'></span></div>`;
+  qz.innerHTML = html;
+  document.getElementById('btnCheck').addEventListener('click', checkQuiz);
+  document.getElementById('btnReset').addEventListener('click', ()=>{ qz.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false); document.getElementById('result').textContent=''; });
+}
+function checkQuiz(){
+  let score=0; let answered=0; QUIZ.forEach((item,i)=>{ const chosen=qz.querySelector(`input[name='q${i}']:checked`); if(chosen){answered++; if(Number(chosen.value)===item.correct) score++;} });
+  const r=document.getElementById('result'); if(answered<QUIZ.length){ r.textContent='Pick an answer for each question.'; return; }
+  r.textContent=(score===QUIZ.length)?'🌟 Perfect! Food production pro!':`Nice! You got ${score} of ${QUIZ.length}.`;
+}
+
+// ----------------------
+// Explorer (pan, zoom, tap)
+// ----------------------
+const explorer = document.getElementById('explorer');
+const viewport = document.getElementById('viewport');
+const zoom = document.getElementById('zoom');
+const zoomLabel = document.getElementById('zoomLabel');
+const btnCenter = document.getElementById('btnCenter');
+const orgName = document.getElementById('orgName');
+const orgDesc = document.getElementById('orgDesc');
+const orgSpeak = document.getElementById('orgSpeak');
+const boardType = document.getElementById('boardType');
+const svg = document.getElementById('boardSVG');
+const legendList = document.getElementById('legendList');
+
+let pan = {x:0,y:0}; let scale = 1;
+function applyTransform(){ viewport.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${scale})`; }
+zoom.addEventListener('input', ()=>{ scale = Number(zoom.value)/100; zoomLabel.textContent = `${zoom.value}%`; applyTransform(); });
+btnCenter.addEventListener('click', ()=>{ pan.x = (explorer.clientWidth-1100*scale)/2; pan.y = (explorer.clientHeight-760*scale)/2; applyTransform(); });
+window.addEventListener('resize', ()=> btnCenter.click());
+
+let panning=false, sx=0, sy=0, ox=0, oy=0;
+explorer.addEventListener('pointerdown', e=>{ if(e.target.closest('.org')) return; panning=true; sx=e.clientX; sy=e.clientY; ox=pan.x; oy=pan.y; explorer.setPointerCapture(e.pointerId); });
+explorer.addEventListener('pointermove', e=>{ if(!panning) return; const dx=e.clientX-sx, dy=e.clientY-sy; pan.x = ox + dx; pan.y = oy + dy; applyTransform(); });
+explorer.addEventListener('pointerup', e=>{ if(panning){ explorer.releasePointerCapture(e.pointerId); } panning=false; });
+
+// ----------------------
+// Boards (SVG) and data
+// ----------------------
+const INFO = {
+  // Plant breeding
+  steps:{name:'Breeding Steps',desc:'(1) Collection of variability (2) Evaluation & selection (3) Hybridisation (4) Selection of superior recombinants (5) Testing, release, and commercialisation.'},
+  hybrid:{name:'Hybridisation',desc:'Crossing genetically different parents to combine desirable traits; may be intervarietal, interspecific, or even intergeneric.'},
+  resistance:{name:'Resistance Breeding',desc:'Developing varieties resistant to diseases/pests via conventional or marker-assisted selection (e.g., rust‑resistant wheat).'},
+  quality:{name:'Quality Traits',desc:'Breeding for protein, oil, vitamin, and micronutrient enrichment (e.g., high‑lysine maize).'},
+  greenrev:{name:'Green Revolution Crops',desc:'Semi‑dwarf wheat (Norin 10 derivatives) and rice (IR8/IR36) raised yield with inputs and management.'},
+  // Animal husbandry
+  dairy:{name:'Dairy Management',desc:'Balanced feed, shelter, disease control, milking hygiene, and breeding for high yield (e.g., HF crosses).'},
+  poultry:{name:'Poultry',desc:'Layers and broilers with selective breeding for egg or meat traits; biosecurity reduces diseases.'},
+  fisheries:{name:'Fisheries',desc:'Inland and marine capture + culture fisheries; composite fish culture uses compatible species to utilise niches.'},
+  apiculture:{name:'Apiculture',desc:'Keeping Apis mellifera for honey, wax, and pollination services; hive management and seasonal flora mapping are key.'},
+  // Biotech add-ons
+  mas:{name:'Marker‑Assisted Selection',desc:'DNA markers tag traits to speed selection (e.g., Sub1 rice for flood tolerance).'},
+  transgenic:{name:'Transgenics',desc:'Inserting genes for traits like insect resistance (Bt) or herbicide tolerance; used with biosafety regulations.'},
+  scp:{name:'Single‑Cell Protein (SCP)',desc:'Protein‑rich biomass from microbes like Spirulina and yeast; low land and water footprint.'},
+  mushroom:{name:'Mushroom Culture',desc:'Edible fungi (e.g., oyster, button) grown on agri‑waste—adds income and nutrition.'},
+  // Tissue culture
+  microprop:{name:'Micropropagation',desc:'Rapid clonal multiplication of disease‑free, uniform plants from small explants in sterile media.'},
+  somatic:{name:'Somatic Hybridisation',desc:'Protoplast fusion creates somatic hybrids/cybrids to combine traits beyond sexual barriers.'},
+  virusfree:{name:'Virus‑Free Stock',desc:'Meristem culture eliminates viruses (e.g., in sugarcane, potato, banana).'},
+  // Aquaculture & Apiculture board extras
+  breeding:{name:'Induced Breeding',desc:'Hormonal induction (hypophysation) in carps enables controlled seed production.'},
+  feed:{name:'Formulated Feed',desc:'Balanced feed improves FCR and growth in ponds and poultry; reduces waste and cost.'}
+};
+
+const LEGENDS = {
+  plant:['Breeding Steps','Hybridisation','Resistance','Quality','Green Revolution'],
+  animal:['Dairy','Poultry','Fisheries','Apiculture'],
+  biotech:['MAS','Transgenics','SCP','Mushroom'],
+  culture:['Micropropagation','Somatic Hybridisation','Virus‑free stock'],
+  aqua:['Induced Breeding','Formulated Feed','Fisheries','Apiculture']
+};
+
+function card(x,y,title,key){
+  return `
+  <g class="org" data-key="${key}" role="button" tabindex="0" transform="translate(${x},${y})">
+    <rect width="300" height="160" rx="18" fill="#ffffff" stroke="#cfeeff" />
+    <text x="16" y="36" font-size="18" font-weight="700" fill="#0b3b5a">${title}</text>
+    <text x="16" y="68" font-size="14" fill="#4d6b80">Tap to hear what it means</text>
+  </g>`;
+}
+
+function makePlant(){
+  return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#grad1)"/>
+  <defs><linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Breeding Steps','steps')}
+  ${card(420,80,'Hybridisation','hybrid')}
+  ${card(780,80,'Resistance Breeding','resistance')}
+  ${card(60,280,'Quality Traits','quality')}
+  ${card(420,280,'Green Revolution Crops','greenrev')}
+  `;
+}
+function makeAnimal(){
+  return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#grad2)"/>
+  <defs><linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Dairy Management','dairy')}
+  ${card(420,80,'Poultry','poultry')}
+  ${card(780,80,'Fisheries','fisheries')}
+  ${card(60,280,'Apiculture','apiculture')}
+  `;
+}
+function makeBiotech(){
+  return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#grad3)"/>
+  <defs><linearGradient id="grad3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'MAS','mas')}
+  ${card(420,80,'Transgenics','transgenic')}
+  ${card(780,80,'SCP','scp')}
+  ${card(60,280,'Mushroom Culture','mushroom')}
+  `;
+}
+function makeCulture(){
+  return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#grad4)"/>
+  <defs><linearGradient id="grad4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Micropropagation','microprop')}
+  ${card(420,80,'Somatic Hybridisation','somatic')}
+  ${card(780,80,'Virus‑Free Stock','virusfree')}
+  `;
+}
+function makeAqua(){
+  return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#grad5)"/>
+  <defs><linearGradient id="grad5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Induced Breeding (Carps)','breeding')}
+  ${card(420,80,'Formulated Feed','feed')}
+  ${card(780,80,'Fisheries','fisheries')}
+  ${card(60,280,'Apiculture','apiculture')}
+  `;
+}
+
+function renderBoard(){
+  const t = boardType.value; let inner='';
+  if(t==='plant') inner = makePlant();
+  if(t==='animal') inner = makeAnimal();
+  if(t==='biotech') inner = makeBiotech();
+  if(t==='culture') inner = makeCulture();
+  if(t==='aqua') inner = makeAqua();
+  svg.innerHTML = inner; buildLegend(t);
+}
+
+function buildLegend(t){
+  const items = LEGENDS[t]||[]; legendList.innerHTML = items.map(x=>`<span class="pill">${x}</span>`).join('');
+}
+
+// Delegated taps
+svg.addEventListener('click', e=>{ const t=e.target.closest('.org'); if(!t) return; const key=t.getAttribute('data-key'); say(key); });
+svg.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ const t=e.target.closest('.org'); if(t){ e.preventDefault(); say(t.getAttribute('data-key')); } } });
+function say(key){ const d=INFO[key]; if(!d) return; orgName.textContent=d.name; orgDesc.textContent=d.desc; speak(`${d.name}. ${d.desc}`); }
+orgSpeak.addEventListener('click', ()=>{ if(orgName.textContent && orgDesc.textContent){ speak(`${orgName.textContent}. ${orgDesc.textContent}`); } });
+boardType.addEventListener('change', renderBoard);
+
+// ----------------------
+// Init
+// ----------------------
+function init(){ renderLine(); buildQuiz(); renderBoard(); btnCenter.click(); }
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

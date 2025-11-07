@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bondona Tutor — Physics • Chapter 11: Sound</title>
+  <style>
+    :root{ --bg:#f6fbff; --card:#ffffff; --ink:#0b3b5a; --muted:#4d6b80; --accent:#26a6ff; --good:#14b86e; --bad:#ff4d6d; --ring:#d9eefb; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#e9f6ff 70%);color:var(--ink)}
+    .wrap{max-width:1100px;margin:auto;padding:20px}
+    .card{background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(13,71,161,.08);padding:20px}
+    h1{margin:0 0 6px 0}
+    .tag{display:inline-block;background:#eaf7ff;border-radius:999px;padding:4px 10px;color:#1673a6;font-size:12px}
+    .grid{display:grid;grid-template-columns: 1fr;gap:20px}
+    .speech{position:relative;background:#fff;border:2px solid #d9eefb;border-radius:18px;padding:16px;min-height:120px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(38,166,255,.24)}
+    button.ghost{background:#eaf7ff;color:#0b5a8a;box-shadow:none}
+    .muted{color:#4d6b80;font-size:13px}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff;color:#0b3b5a;font-size:12px}
+    .sim{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .panel{display:grid;grid-template-columns: 320px 1fr;gap:16px;align-items:stretch}
+    .explorer{position:relative;height:480px;border:2px dashed var(--ring);border-radius:16px;overflow:hidden;background:radial-gradient(circle at center, #ffffff 0, #f7fbff 70%)}
+    .viewport{position:absolute;left:0;top:0;transform-origin:0 0;cursor:grab;will-change:transform;backface-visibility:hidden;transform:translateZ(0)}
+    .viewport:active{cursor:grabbing}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .side{background:#f8fcff;border:1px solid #d9eefb;border-radius:12px;padding:10px}
+    .side h4{margin:0 0 6px 0}
+    .side .row{display:grid;grid-template-columns: 1fr auto;align-items:center;gap:8px}
+    .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+    svg *{vector-effect:non-scaling-stroke;shape-rendering:geometricPrecision}
+    svg .org{cursor:pointer;transition:filter .2s ease}
+    svg .org:hover{filter:brightness(1.08)}
+    .quiz{margin-top:18px;background:#fff;border:2px dashed #cfeeff;border-radius:16px;padding:14px}
+    .q{margin:10px 0}
+    .phet{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .phet-frame{position:relative;width:100%;height:560px;border-radius:12px;overflow:hidden}
+    iframe.phet-embed{width:100%;height:100%;border:0;display:block}
+    .warn{background:#fffceb;border:1px solid #ffe08a;border-radius:10px;padding:10px}
+    .mini{font-size:12px;color:#4d6b80}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Physics • Chapter 11: Sound</h1>
+    <div class="tag">Longitudinal Waves • v = fλ • Loudness/Pitch/Quality • Reflection & Echo • Reverberation • SONAR • Human Ear</div>
+
+    <div class="grid">
+      <!-- Story / Overview -->
+      <section>
+        <div class="speech" id="speech"></div>
+        <div class="controls">
+          <button id="btnPrev" class="ghost">◁ Prev</button>
+          <button id="btnNext">Next ▷</button>
+          <button id="btnEnable" class="ghost">🔊 Enable Audio</button>
+          <button id="btnSpeak">▶ Narrate (Male)</button>
+          <span class="muted" id="lineInfo"></span>
+        </div>
+      </section>
+
+      <!-- Zoomable Explorer -->
+      <section class="sim">
+        <h3>Lab: Sound Explorer</h3>
+        <div class="panel">
+          <div class="side">
+            <div class="row"><h4>Choose Board</h4>
+              <select id="boardType" style="padding:8px;border:2px solid #cfeeff;border-radius:10px;font-weight:700;color:#0b3b5a">
+                <option value="nature">Nature of Sound</option>
+                <option value="speed">Speed & v=fλ</option>
+                <option value="props">Loudness • Pitch • Quality</option>
+                <option value="echo">Reflection, Echo & Reverberation</option>
+                <option value="sonar">Ultrasound & SONAR</option>
+                <option value="ear">Human Ear</option>
+              </select>
+            </div>
+            <div class="row" style="margin-top:8px"><span class="pill">Zoom: <span id="zoomLabel">100%</span></span>
+              <input id="zoom" type="range" min="80" max="200" value="100" step="5">
+            </div>
+            <div class="legend">
+              <span class="pill">Tap items → hear + learn</span>
+              <button id="btnCenter" class="ghost">🎯 Center</button>
+              <button id="btnMute" class="ghost">🔇 Mute</button>
+            </div>
+            <div class="side" id="infoBox" style="margin-top:10px">
+              <h4 id="orgName">Tap an item</h4>
+              <div id="orgDesc" class="muted">I will tell you what it means.</div>
+              <div class="controls" style="margin-top:8px"><button id="orgSpeak" class="ghost">▶ Speak</button></div>
+            </div>
+
+            <div class="list" id="legendList"></div>
+          </div>
+
+          <div class="explorer" id="explorer">
+            <div class="viewport" id="viewport">
+              <svg id="boardSVG" viewBox="0 0 1100 760" width="1100" height="760" aria-label="Sound boards"></svg>
+            </div>
+          </div>
+        </div>
+        <p class="muted">Tip: Use the slider to zoom. Drag the background to pan. Tap a card or sketch to hear and learn. Switch boards from the dropdown.</p>
+      </section>
+
+      <!-- PhET Sound (online + fallbacks) -->
+      <section class="phet">
+        <h3>Interactive: PhET — Sound</h3>
+        <div class="phet-frame">
+          <iframe
+            id="phetFrame"
+            class="phet-embed"
+            title="PhET Sound"
+            src="https://phet.colorado.edu/sims/html/sound/latest/sound_en.html"
+            allow="fullscreen; gamepad; xr-spatial-tracking; clipboard-read; clipboard-write"
+            sandbox="allow-scripts allow-forms allow-same-origin allow-pointer-lock allow-popups allow-downloads"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        <div class="controls" style="margin-top:10px">
+          <button id="btnPhETNewTab" class="ghost">🔗 Open in New Tab (if blocked)</button>
+          <button id="btnPhETLocal" class="ghost" title="Use a local copy you downloaded">💾 Use Local Copy</button>
+          <span id="phetStatus" class="muted"></span>
+        </div>
+        <div class="warn" style="margin-top:10px">
+          Offline? Download the HTML5 sim and serve it via a local HTTP server. Example:
+          <code>http://127.0.0.1/phet/sound_en.html</code> (iframes from <code>file://</code> are blocked).
+        </div>
+      </section>
+
+      <!-- Mini Interactive (offline srcdoc) — Tone Mixer & v=fλ calculator -->
+      <section class="phet">
+        <h3>Mini Interactive: Tone Mixer & v = fλ</h3>
+        <div class="phet-frame">
+          <iframe class="phet-embed" title="Tone mixer mini" allow="autoplay" srcdoc='<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:system-ui;margin:0;padding:14px;color:#0b3b5a;background:#fff} .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap} .card{border:1px solid #cfeeff;border-radius:12px;padding:12px;margin-top:10px} input[type=range]{width:220px} canvas{border:1px solid #cfeeff;border-radius:8px;background:#fff;margin-top:10px} .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff} .mini{font-size:12px;color:#4d6b80} button{appearance:none;border:none;background:#26a6ff;color:#fff;padding:8px 12px;border-radius:10px;font-weight:700;cursor:pointer} button.ghost{background:#eaf7ff;color:#0b5a8a} .warn{background:#fffceb;border:1px solid #ffe08a;border-radius:10px;padding:8px;margin-top:8px}</style></head><body>
+<div class="row"><label>Frequency f (Hz): <input id="f" type="range" min="100" max="2000" value="440"></label><span class="pill" id="fv">440 Hz</span><label>Amplitude A: <input id="A" type="range" min="0" max="100" value="40"></label><span class="pill" id="Av">40</span></div>
+<div class="row"><label>Medium speed v (m/s): <input id="v" type="range" min="200" max="350" value="343"></label><span class="pill" id="vv">343 m/s</span><span class="pill">λ = <span id="lam">0.78</span> m</span></div>
+<div class="card">Press <b>Enable Audio</b> once, then Play. Louder = higher amplitude; higher pitch = higher frequency. λ = v/f.</div>
+<div class="row"><button id="enable" class="ghost">🔊 Enable Audio</button><button id="play">▶ Play</button><button id="stop">⏹ Stop</button></div>
+<canvas id="cv" width="680" height="220"></canvas>
+<p class="mini">If you still hear nothing, click once anywhere in this panel (some browsers require a user gesture inside iframes). On iOS/Android, ensure the device is not in silent mode.</p>
+<div id="msg" class="warn" style="display:none"></div>
+<script>const $=id=>document.getElementById(id); const cv=$("cv"), ctx=cv.getContext("2d"); let AC=null, OSC=null, GAIN=null; let unlocked=false; function showMsg(t){const m=$("msg"); m.textContent=t; m.style.display='block';}
+function makeContext(){ try{ const C=window.AudioContext||window.webkitAudioContext; if(!C){ showMsg('Web Audio not supported in this browser.'); return false; } if(!AC){ AC=new C(); GAIN=AC.createGain(); GAIN.gain.value=0; GAIN.connect(AC.destination);} return true; }catch(e){ showMsg('Audio init error: '+e.message); return false; }}
+async function enable(){ if(!makeContext()) return; try{ await AC.resume(); unlocked=true; $("enable").textContent='✅ Audio On'; }catch(e){ showMsg('Resume blocked: '+e.message); }}
+function ensureOsc(){ if(!AC) return false; if(OSC) return true; OSC=AC.createOscillator(); OSC.type='sine'; OSC.connect(GAIN); try{ OSC.start(); }catch(e){ /* already started */ } return true; }
+function play(){ if(!unlocked){ enable(); } if(!AC){ if(!makeContext()) return; } if(AC.state==='suspended'){ AC.resume(); }
+  ensureOsc(); const f=+$("f").value; const A=+$("A").value/100; OSC.frequency.setTargetAtTime(f, AC.currentTime, 0.01); GAIN.gain.setTargetAtTime(A, AC.currentTime, 0.01); }
+function stop(){ if(GAIN&&AC){ GAIN.gain.setTargetAtTime(0, AC.currentTime, 0.01); } if(OSC){ try{ OSC.stop(); }catch(e){} try{ OSC.disconnect(); }catch(e){} OSC=null; }}
+["click","pointerdown","touchstart"].forEach(ev=>window.addEventListener(ev,()=>{ if(AC&&AC.state==='suspended'){ AC.resume(); } }));
+["visibilitychange","pageshow"].forEach(()=>{ if(AC&&AC.state==='suspended'){ AC.resume(); }});
+function upd(){const f=+$("f").value; const A=+$("A").value; const v=+$("v").value; $("fv").textContent=f+" Hz"; $("Av").textContent=A; $("vv").textContent=v+" m/s"; $("lam").textContent=(v/f).toFixed(2); if(OSC&&AC){ OSC.frequency.setTargetAtTime(f, AC.currentTime, 0.01);} draw(f,A);} 
+function draw(f,A){ctx.clearRect(0,0,cv.width,cv.height); ctx.strokeStyle='#0b3b5a'; ctx.fillStyle='#0b3b5a'; ctx.lineWidth=2; ctx.beginPath(); const amp=A*0.8; for(let x=0;x<680;x++){ const t=x/680; const y=110 - amp*Math.sin(2*Math.PI*f*t/60); if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);} ctx.stroke(); ctx.fillText('Waveform (concept)', 12, 18);} 
+$("enable").addEventListener('click', enable); $("play").addEventListener('click', play); $("stop").addEventListener('click', stop); ["f","A","v"].forEach(id=>$(id).addEventListener('input', upd)); upd(); </script></body></html>'></iframe>
+        </div>
+      </section>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz"></section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// Story lines
+// ----------------------
+const LINES = [
+  "Sound is a mechanical longitudinal wave: regions of compression and rarefaction travel through a medium.",
+  "Speed depends on medium and temperature (fastest in solids). Relation: v = f λ.",
+  "Loudness depends on amplitude; pitch depends on frequency; quality depends on waveform (timbre).",
+  "Reflection of sound produces echoes and reverberation; absorption and acoustics control room sound.",
+  "Ultrasound has f > 20 kHz. SONAR measures sea depth and finds objects using time-of-flight.",
+  "Ear parts: outer ear collects, middle ear amplifies via ossicles, inner ear (cochlea) converts to nerve signals."
+];
+
+// ----------------------
+// Quiz bank
+// ----------------------
+const QUIZ = [
+  {q:"In air, increasing frequency with speed fixed will…",a:["Increase wavelength","Decrease wavelength","Not change wavelength"],correct:1},
+  {q:"Pitch of a sound mainly depends on…",a:["Amplitude","Frequency","Medium"],correct:1},
+  {q:"An echo is heard when reflected sound returns after at least… (in air, ~343 m/s)",a:["0.1 s","0.01 s","1 s"],correct:0},
+  {q:"SONAR stands for…",a:["Sound Navigation and Ranging","Sound Natural Resonance","Sub‑ocean Navigation and Radar"],correct:0},
+  {q:"Part of ear that contains sensory hair cells:",a:["Pinna","Ossicles","Cochlea"],correct:2}
+];
+
+// ----------------------
+// TTS (male-preferred) with priming
+// ----------------------
+let currentIdx = 0; let voices = []; let muted=false; let audioEnabled=false;
+const speechBox = document.getElementById('speech');
+const lineInfo = document.getElementById('lineInfo');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+const btnMute = document.getElementById('btnMute');
+const btnEnable = document.getElementById('btnEnable');
+
+function renderLine(){ speechBox.textContent = LINES[currentIdx]; lineInfo.textContent = `Line ${currentIdx+1} of ${LINES.length}`; }
+function loadVoices(){ try{ voices = window.speechSynthesis.getVoices(); }catch(e){ voices = []; } }
+function pickMaleVoice(){ if(!voices.length) return null; const pref=/(male|daniel|george|brian|english male|barry|david|microsoft|google uk|alex)/i; const en=v=>/en/i.test(v.lang||""); return voices.find(v=>pref.test((v.name||"")+" "+(v.lang||""))&&en(v)) || voices.find(en) || voices[0]; }
+function speak(text){ if(muted || !audioEnabled) return; if(!('speechSynthesis' in window)) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); loadVoices(); const v=pickMaleVoice(); if(v) u.voice=v; u.pitch=1.0; u.rate=1.03; window.speechSynthesis.speak(u);}catch(e){} }
+if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=()=>{ loadVoices(); }; }
+btnEnable.addEventListener('click', ()=>{ audioEnabled = true; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance("Audio enabled."); const v=pickMaleVoice(); if(v) u.voice=v; window.speechSynthesis.speak(u);}catch(e){} btnEnable.textContent = "✅ Audio On"; });
+btnSpeak.addEventListener('click', ()=>{ speak(LINES[currentIdx]); });
+btnNext.addEventListener('click', ()=>{ if(currentIdx<LINES.length-1){ currentIdx++; renderLine(); } });
+btnPrev.addEventListener('click', ()=>{ if(currentIdx>0){ currentIdx--; renderLine(); } });
+btnMute.addEventListener('click', ()=>{ muted=!muted; btnMute.textContent = muted? '🔊 Unmute' : '🔇 Mute'; if(muted){ try{ window.speechSynthesis.cancel(); }catch(e){} } });
+
+// ----------------------
+// Build Quiz
+// ----------------------
+const qz = document.getElementById('quiz');
+function buildQuiz(){ let html = '<h3>Quiz Time! 🎉</h3>'; QUIZ.forEach((item,i)=>{ html += `<div class="q"><b>${i+1}. ${item.q}</b><div>`; item.a.forEach((opt,j)=>{ html += `<label style="display:block;margin:.25rem 0"><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`; }); html += '</div></div>'; }); html += `<div class='controls'><button id='btnCheck' class='good'>Check Answers</button><button id='btnReset' class='ghost'>Reset</button><span id='result' class='muted'></span></div>`; qz.innerHTML = html; document.getElementById('btnCheck').addEventListener('click', checkQuiz); document.getElementById('btnReset').addEventListener('click', ()=>{ qz.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false); document.getElementById('result').textContent=''; }); }
+function checkQuiz(){ let score=0; let answered=0; QUIZ.forEach((item,i)=>{ const chosen=qz.querySelector(`input[name='q${i}']:checked`); if(chosen){answered++; if(Number(chosen.value)===item.correct) score++;} }); const r=document.getElementById('result'); if(answered<QUIZ.length){ r.textContent='Pick an answer for each question.'; return; } r.textContent=(score===QUIZ.length)?'🌟 Perfect! Sound star!':`Nice! You got ${score} of ${QUIZ.length}.`; }
+
+// ----------------------
+// Explorer (pan, zoom, tap)
+// ----------------------
+const explorer = document.getElementById('explorer');
+const viewport = document.getElementById('viewport');
+const zoom = document.getElementById('zoom');
+const zoomLabel = document.getElementById('zoomLabel');
+const btnCenter = document.getElementById('btnCenter');
+const orgName = document.getElementById('orgName');
+const orgDesc = document.getElementById('orgDesc');
+const orgSpeak = document.getElementById('orgSpeak');
+const boardType = document.getElementById('boardType');
+const svg = document.getElementById('boardSVG');
+const legendList = document.getElementById('legendList');
+
+let pan = {x:0,y:0}; let scale = 1;
+function applyTransform(){ viewport.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${scale})`; }
+zoom.addEventListener('input', ()=>{ scale = Number(zoom.value)/100; zoomLabel.textContent = `${zoom.value}%`; applyTransform(); });
+btnCenter.addEventListener('click', ()=>{ pan.x = (explorer.clientWidth-1100*scale)/2; pan.y = (explorer.clientHeight-760*scale)/2; applyTransform(); });
+window.addEventListener('resize', ()=> btnCenter.click());
+
+let panning=false, sx=0, sy=0, ox=0, oy=0;
+explorer.addEventListener('pointerdown', e=>{ if(e.target.closest('.org')) return; panning=true; sx=e.clientX; sy=e.clientY; ox=pan.x; oy=pan.y; explorer.setPointerCapture(e.pointerId); });
+explorer.addEventListener('pointermove', e=>{ if(!panning) return; const dx=e.clientX-sx, dy=e.clientY-sy; pan.x = ox + dx; pan.y = oy + dy; applyTransform(); });
+explorer.addEventListener('pointerup', e=>{ if(panning){ explorer.releasePointerCapture(e.pointerId); } panning=false; });
+
+// ----------------------
+// Boards (SVG) and data
+// ----------------------
+const INFO = {
+  // Nature of sound
+  longitudinal:{name:'Longitudinal Wave',desc:'Sound in air travels as compressions and rarefactions along direction of propagation.'},
+  needs:{name:'Needs Medium',desc:'Sound needs a material medium; vacuum cannot transmit sound.'},
+  range:{name:'Audible Range',desc:'Human hearing ~20 Hz to 20 kHz. Below: infrasound; above: ultrasound.'},
+  // Speed & relation
+  speed:{name:'Speed v',desc:'Depends on medium and temperature (≈343 m/s in air at 20°C). Fastest in solids, slowest in gases.'},
+  rel:{name:'v = f λ',desc:'For a wave, speed equals frequency times wavelength.'},
+  temp:{name:'Effect of Temperature',desc:'Warm air → higher v; humid air also slightly increases speed.'},
+  // Properties
+  loud:{name:'Loudness',desc:'Perceived intensity; mainly set by amplitude. Measured via sound level (dB).'},
+  pitch:{name:'Pitch',desc:'How high/low a tone sounds; depends on frequency.'},
+  quality:{name:'Quality/Timbre',desc:'Waveform (overtones) distinguishes instruments playing same note.'},
+  // Echo
+  echo:{name:'Echo',desc:'Reflected sound heard separately if path difference gives ≥0.1 s delay.'},
+  reverb:{name:'Reverberation',desc:'Multiple reflections cause persistence of sound; controlled by absorbent materials.'},
+  acoustics:{name:'Acoustics',desc:'Good halls balance reflection and absorption for clarity and richness.'},
+  // SONAR & ultrasound
+  ultra:{name:'Ultrasound',desc:'Used in cleaning, imaging, drilling; frequencies above 20 kHz.'},
+  sonar:{name:'SONAR',desc:'Time-of-flight of ultrasound in water to find depth/distance and objects.'},
+  // Ear
+  earparts:{name:'Ear Parts',desc:'Outer (pinna, canal), Middle (eardrum, ossicles), Inner (cochlea, auditory nerve).'},
+  cochlea:{name:'Cochlea',desc:'Fluid-filled spiral with hair cells that convert vibrations to nerve impulses.'}
+};
+
+const LEGENDS = {
+  nature:['Longitudinal','Needs Medium','Audible Range'],
+  speed:['Speed','v = fλ','Temperature'],
+  props:['Loudness','Pitch','Quality'],
+  echo:['Echo','Reverberation','Acoustics'],
+  sonar:['Ultrasound','SONAR'],
+  ear:['Ear Parts','Cochlea']
+};
+
+function card(x,y,title,key){ return `
+  <g class="org" data-key="${key}" role="button" tabindex="0" transform="translate(${x},${y})">
+    <rect width="320" height="160" rx="18" fill="#ffffff" stroke="#cfeeff" />
+    <text x="16" y="36" font-size="18" font-weight="700" fill="#0b3b5a">${title}</text>
+    <text x="16" y="68" font-size="14" fill="#4d6b80">Tap to hear what it means</text>
+  </g>`; }
+
+function makeNature(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g1)"/>
+  <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Longitudinal Wave','longitudinal')}
+  ${card(420,80,'Needs Medium','needs')}
+  ${card(60,280,'Audible Range','range')}
+  `; }
+
+function makeSpeed(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g2)"/>
+  <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Speed','speed')}
+  ${card(420,80,'v = f λ','rel')}
+  ${card(60,280,'Temperature','temp')}
+  `; }
+
+function makeProps(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g3)"/>
+  <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Loudness','loud')}
+  ${card(420,80,'Pitch','pitch')}
+  ${card(60,280,'Quality','quality')}
+  `; }
+
+function makeEcho(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g4)"/>
+  <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Echo','echo')}
+  ${card(420,80,'Reverberation','reverb')}
+  ${card(60,280,'Acoustics','acoustics')}
+  `; }
+
+function makeSonar(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g5)"/>
+  <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Ultrasound','ultra')}
+  ${card(420,80,'SONAR','sonar')}
+  `; }
+
+function makeEar(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g6)"/>
+  <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Ear Parts','earparts')}
+  ${card(420,80,'Cochlea','cochlea')}
+  `; }
+
+function renderBoard(){ const t = boardType.value; let inner=''; if(t==='nature') inner = makeNature(); if(t==='speed') inner = makeSpeed(); if(t==='props') inner = makeProps(); if(t==='echo') inner = makeEcho(); if(t==='sonar') inner = makeSonar(); if(t==='ear') inner = makeEar(); svg.innerHTML = inner; buildLegend(t); }
+function buildLegend(t){ const items = LEGENDS[t]||[]; legendList.innerHTML = items.map(x=>`<span class="pill">${x}</span>`).join(''); }
+
+// Delegated taps
+svg.addEventListener('click', e=>{ const t=e.target.closest('.org'); if(!t) return; const key=t.getAttribute('data-key'); say(key); });
+svg.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ const t=e.target.closest('.org'); if(t){ e.preventDefault(); say(t.getAttribute('data-key')); } } });
+function say(key){ const d=INFO[key]; if(!d) return; orgName.textContent=d.name; orgDesc.textContent=d.desc; speak(`${d.name}. ${d.desc}`); }
+orgSpeak.addEventListener('click', ()=>{ if(orgName.textContent && orgDesc.textContent){ speak(`${orgName.textContent}. ${orgDesc.textContent}`); } });
+boardType.addEventListener('change', renderBoard);
+
+// ----------------------
+// PhET controls (online + local)
+// ----------------------
+const phetURL = "https://phet.colorado.edu/sims/html/sound/latest/sound_en.html";
+const phetFrame = document.getElementById("phetFrame");
+const phetStatus = document.getElementById("phetStatus");
+(document.getElementById("btnPhETNewTab")||{}).onclick = ()=> window.open(phetURL, "_blank");
+(document.getElementById("btnPhETLocal")||{}).onclick = ()=>{ const localURL = "http://127.0.0.1/phet/sound_en.html"; phetFrame.src = localURL; phetStatus.textContent = "Switched to local copy."; };
+setTimeout(()=>{ phetStatus.textContent = "If the panel is blank, click Open in New Tab or Use Local Copy."; }, 2500);
+
+// ----------------------
+// Init
+// ----------------------
+function init(){ renderLine(); buildQuiz(); renderBoard(); btnCenter.click(); }
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

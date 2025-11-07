@@ -1,0 +1,5 @@
+[R1] Sound — Key Points
+• Mechanical longitudinal wave; needs a medium.
+• v = f × λ; speed highest in solids, then liquids, then gases.
+• Audible range ≈ 20 Hz–20 kHz; infra/ultra-sonic below/above.
+• Reflection → echo & reverberation; applications of ultrasound.

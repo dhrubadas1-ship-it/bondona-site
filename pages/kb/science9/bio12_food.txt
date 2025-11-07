@@ -1,0 +1,5 @@
+[R1] Improvement in Food Resources — Key Points
+• Crop variety improvement: yield, quality, biotic/abiotic resistance, maturity duration.
+• Crop production: soil preparation → sowing → manuring/fertilizers → irrigation → weeding → harvesting → storage.
+• IPM: combine cultural, mechanical, biological, and chemical methods to reduce pests.
+• Animal husbandry: cattle, poultry, fisheries; breeding, feeding, disease control, housing.

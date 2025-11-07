@@ -1,0 +1,5 @@
+[R1] Gravitation — Key Points
+• Universal law: F = G m1 m2 / r^2.
+• Acceleration due to gravity near Earth: g ≈ 9.8 m/s^2; Weight W = m g; mass is constant.
+• Free fall: motion under gravity alone; equations of motion apply with a = g.
+• Buoyancy and Archimedes’ principle: upthrust equals weight of displaced fluid.

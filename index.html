@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Bondona • Class 9 Science (CBSE/NCERT) — AI Quiz + AI Grader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --c-phy:#2563eb; --c-chem:#059669; --c-bio:#ca8a04; }
+    body{margin:0;font-family:system-ui,Segoe UI,Arial;background:#f8fafc;color:#0f172a}
+    header{padding:14px 18px;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center}
+    h1{margin:0;font-size:18px}
+    .meta{font-size:12px;color:#475569;margin-top:6px}
+    .wrap{max-width:1220px;margin:20px auto;padding:0 16px}
+    .layout{display:grid;grid-template-columns: 1.2fr 1fr; gap:16px}
+    @media (max-width: 1080px){ .layout{grid-template-columns:1fr} }
+
+    /* Cards */
+    .search { width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:10px; margin:12px 0 16px; background:#fff; }
+    .grid { display:grid; gap:12px; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); }
+    .card { display:block; padding:14px; background:#fff; border:1px solid #e5e7eb; border-radius:12px; text-decoration:none; color:inherit; transition:transform .06s ease; }
+    .card:hover { transform: translateY(-2px); background:#fdfdfd; }
+    .tag { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; color:#fff; }
+    .phy { background:var(--c-phy); }
+    .chem { background:var(--c-chem); }
+    .bio { background:var(--c-bio); }
+
+    /* Tutor & Lab */
+    .box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px}
+    textarea{width:100%;min-height:84px;border:1px solid #d1d5db;border-radius:10px;padding:10px;font-family:inherit;background:#fff}
+    input[type="text"]{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:8px 10px;background:#fff}
+    button{padding:10px 14px;border:1px solid #cbd5e1;border-radius:10px;background:#1f2937;color:#fff;cursor:pointer;font-weight:600}
+    button.secondary{background:#fff;color:#111827}
+    button.ghost{background:transparent;color:#0f172a;border-color:#e2e8f0}
+    button:hover{filter:brightness(1.05)}
+    .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+    #ans,#feedback{white-space:pre-wrap;border:1px solid #d1d5db;border-radius:10px;padding:10px;margin-top:12px;background:#f9fafb}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:#e2e8f0;color:#0f172a;margin-right:6px}
+    .ok{color:#059669}.err{color:#b91c1c}
+
+    /* Lab */
+    .tabs{display:flex;gap:8px;margin:10px 0}
+    .tab{padding:8px 12px;border:1px solid #e2e8f0;border-radius:999px;background:#f8fafc;cursor:pointer}
+    .tab.active{background:#111827;color:#fff;border-color:#111827}
+    .lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:880px){.lab-grid{grid-template-columns:1fr}}
+    .panel{border:1px solid #e5e7eb;border-radius:12px;background:#fff;padding:12px}
+    .canvas-wrap{border:1px dashed #cbd5e1;border-radius:10px;height:280px;display:flex;align-items:center;justify-content:center;background:#fefefe}
+    canvas{max-width:100%}
+    .hint{font-size:12px;color:#475569;margin-top:6px}
+    .small{font-size:12px;color:#475569}
+
+    /* Media dock */
+    .dock{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+    .dock h3{margin-top:4px}
+    .ifr{width:100%;aspect-ratio:16/9;border:1px solid #e5e7eb;border-radius:10px;background:#000}
+    .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:#e2e8f0;color:#0f172a}
+
+    /* Header status */
+    .status{display:flex;align-items:center;gap:8px}
+  </style>
+</head>
+<body>
+<script>
+  // Base server for local/offline backends (OpenAI-compatible or llama.cpp)
+  const API_BASE = `${window.location.origin}/v1`;
+  let SERVER = window.location.origin; // do not append /v1 here
+  window.SERVER = SERVER;
+  console.log("SERVER set to:", SERVER);
+</script>
+<header>
+  <div>
+    <h1>Bondona Tutor — Class 9 Science (CBSE/NCERT)</h1>
+    <div class="meta" id="meta">Booting…</div>
+  </div>
+  <div class="status">
+    <span class="badge" id="netBadge">Detecting…</span>
+    <span class="badge" id="apiBadge">API?</span>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <!-- LEFT: Chapters + Tutor + Lab -->
+  <div>
+    <!-- Search + Chapter Cards -->
+    <input class="search" id="q" placeholder="Search topic or chapter (e.g., velocity, gravitation, atoms)">
+    <div id="cards" class="grid">
+      <!-- Chemistry -->
+      <a class="card" data-topic="Matter in our Surroundings" data-chapid="chem1_matter" href="./pages/chem1_matter.html">
+        <div class="tag chem">Chem • Ch 1</div><h3>Matter in our Surroundings</h3><div>States of matter, evaporation, latent heat.</div>
+      </a>
+      <a class="card" data-topic="Is Matter Around Us Pure?" data-chapid="chem2_pure" href="./pages/chem2_pure.html">
+        <div class="tag chem">Chem • Ch 2</div><h3>Is Matter Around Us Pure?</h3><div>Elements, compounds, mixtures; separation.</div>
+      </a>
+      <a class="card" data-topic="Atoms and Molecules" data-chapid="chem3_atoms" href="./pages/chem3_atoms.html">
+        <div class="tag chem">Chem • Ch 3</div><h3>Atoms and Molecules</h3><div>Mole concept, atomic/molar mass.</div>
+      </a>
+      <a class="card" data-topic="Structure of the Atom" data-chapid="chem4_structure" href="./pages/chem4_structure.html">
+        <div class="tag chem">Chem • Ch 4</div><h3>Structure of the Atom</h3><div>Models, distribution, isotopes.</div>
+      </a>
+
+      <!-- Biology -->
+      <a class="card" data-topic="The Fundamental Unit of Life (Cell)" data-chapid="bio5_cell" href="./pages/bio5_cell.html">
+        <div class="tag bio">Bio • Ch 5</div><h3>The Fundamental Unit of Life</h3><div>Cell theory, organelles, osmosis.</div>
+      </a>
+      <a class="card" data-topic="Tissues" data-chapid="bio6_tissues" href="./pages/bio6_tissues.html">
+        <div class="tag bio">Bio • Ch 6</div><h3>Tissues</h3><div>Plant & animal tissues.</div>
+      </a>
+      <a class="card" data-topic="Improvement in Food Resources" data-chapid="bio12_food" href="./pages/bio12_food.html">
+        <div class="tag bio">Bio • Ch 12</div><h3>Improvement in Food Resources</h3><div>Production, protection, husbandry.</div>
+      </a>
+
+      <!-- Physics -->
+      <a class="card" data-topic="Force" data-chapid="phy7_force" href="./pages/phy7_force.html">
+        <div class="tag phy">Phy • Ch 7</div><h3>Force</h3><div>Types, effects on motion & shape.</div>
+      </a>
+      <a class="card" data-topic="Force and Laws of Motion" data-chapid="phy8_laws" href="./pages/phy8_laws.html">
+        <div class="tag phy">Phy • Ch 8</div><h3>Force and Laws of Motion</h3><div>Newton’s laws, momentum.</div>
+      </a>
+      <a class="card" data-topic="Gravitation" data-chapid="phy9_gravitation" href="./pages/phy9_gravitation.html">
+        <div class="tag phy">Phy • Ch 9</div><h3>Gravitation</h3><div>Universal law, g, buoyancy.</div>
+      </a>
+      <a class="card" data-topic="Work and Energy" data-chapid="phy10_work" href="./pages/phy10_work.html">
+        <div class="tag phy">Phy • Ch 10</div><h3>Work and Energy</h3><div>Forms, power, numericals.</div>
+      </a>
+      <a class="card" data-topic="Sound" data-chapid="phy11_sound" href="./pages/phy11_sound.html">
+        <div class="tag phy">Phy • Ch 11</div><h3>Sound</h3><div>Wave nature, speed, echo.</div>
+      </a>
+    </div>
+
+    <!-- Tutor -->
+    <div class="box" style="margin-top:16px">
+      <div class="row">
+        <span class="pill">Explain + Mini-Quiz</span>
+        <span class="pill">Diagnostic</span>
+        <span class="pill">Practice Quiz</span>
+        <span class="pill">Check Answers</span>
+      </div>
+      <textarea id="chatQ" placeholder="Type a topic or question (e.g., 'Explain Newton’s 3rd Law with examples')"></textarea>
+      <div class="row">
+        <button id="btnExplain">Explain</button>
+        <button class="secondary" id="btnPractice">Practice Quiz</button>
+        <button class="secondary" id="btnDiagnostic">Start Diagnostic</button>
+        <button id="btnCheck">Check Answers</button>
+      </div>
+      <div id="ans"></div>
+
+      <h4 style="margin:16px 0 6px">Your Answers (for checking quiz):</h4>
+      <textarea id="answers" placeholder="1)…  2)…  3)…  4)…  5)…"></textarea>
+      <div id="feedback"></div>
+      <div class="meta" id="progress"></div>
+    </div>
+
+    <!-- Problem-Solving Lab (AI Explain) -->
+    <div class="box" style="margin-top:16px">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h3 style="margin:0">Problem-Solving Lab (AI Explain)</h3>
+        <span class="small">Math • Chemistry • Custom</span>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-tab="math">Math</div>
+        <div class="tab" data-tab="chem">Chemistry</div>
+        <div class="tab" data-tab="custom">Custom</div>
+      </div>
+      <div id="lab-math">
+        <div class="panel">
+          <div class="row">
+            <input id="mathInput" type="text" placeholder="Type a problem (e.g., Solve 2x + 3 = 11)">
+            <button id="explainMath">Explain with AI</button>
+          </div>
+          <div id="mathOut" class="panel" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div id="lab-chem" style="display:none">
+        <div class="panel">
+          <div class="row">
+            <input id="chemInput" type="text" placeholder="Balance/solve (e.g., Fe + O2 -> Fe2O3) or C1V1 = C2V2: 1 M x 50 mL = ? x 200 mL">
+            <button id="explainChem">Explain with AI</button>
+          </div>
+          <div id="chemOut" class="panel" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div id="lab-custom" style="display:none">
+        <div class="panel">
+          <textarea id="customInput" placeholder="Paste any math/chem word problem."></textarea>
+          <div class="row"><button id="explainCustom">Explain with AI</button></div>
+          <div id="customOut" class="panel" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Media Dock (YouTube + PhET + Khan Quick) -->
+  <div>
+    <div class="dock">
+      <h3>Media Dock — Videos & Simulations</h3>
+      <div class="hint">Paste a YouTube URL and a PhET URL (or use quick presets). Click "Load Media".</div>
+
+      <label class="hint" for="ytUrl">YouTube URL</label>
+      <input id="ytUrl" type="text" placeholder="https://www.youtube.com/watch?v=...">
+      <label class="hint" for="phetUrl">PhET Simulation URL</label>
+      <input id="phetUrl" type="text" placeholder="https://phet.colorado.edu/sims/html/.../index.html">
+      <div class="row">
+        <button id="btnLoadMedia">Load Media</button>
+        <button class="secondary" id="btnClearMedia">Clear</button>
+      </div>
+      <div style="margin-top:10px">
+        <iframe id="ytFrame" class="ifr" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div style="margin-top:10px">
+        <iframe id="phetFrame" class="ifr"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Crash guard ===== */
+window.addEventListener('error', e=>{
+  const meta = document.getElementById('meta');
+  meta.innerHTML = "JS Error: <span class='err'>" + (e.message||e) + "</span>";
+});
+
+/* ===== Network & API status ===== */
+const netBadge = document.getElementById('netBadge');
+function updateNet(){ netBadge.textContent = navigator.onLine ? "Online" : "Offline"; }
+updateNet(); window.addEventListener('online',updateNet); window.addEventListener('offline',updateNet);
+
+/* Respect ?api= override */
+const params = new URLSearchParams(location.search);
+if (params.get("api")) SERVER = params.get("api");
+
+/* ===== Serverless detector (prefers /api/chat when hosted) ===== */
+window.USE_SERVERLESS = false;
+(async () => {
+  try {
+    const r = await fetch('/api/chat', { method: 'OPTIONS' });
+    if (r.ok || r.status === 204 || r.status === 405) window.USE_SERVERLESS = true;
+  } catch {}
+  if (!window.USE_SERVERLESS && /vercel\.app|cloudflare|netlify/.test(location.host)) {
+    window.USE_SERVERLESS = true;
+  }
+  const apiBadge = document.getElementById('apiBadge');
+  if (window.USE_SERVERLESS) { apiBadge.textContent = 'API: /api/chat'; }
+})();
+
+/* ===== API mode detection for local backends ===== */
+let USE_OPENAI_STYLE = true;
+const metaEl = document.getElementById('meta');
+(async ()=>{
+  if (window.USE_SERVERLESS) {
+    metaEl.innerHTML = `API: <span class='ok'>/api/chat</span>`;
+    return;
+  }
+  try {
+    const r = await fetch(`${SERVER}/v1/models`);
+    if (!r.ok) throw 0;
+    await r.json();
+    USE_OPENAI_STYLE = true;
+    metaEl.innerHTML = `API: <span class='ok'>${SERVER} /v1</span>`;
+    document.getElementById('apiBadge').textContent = '/v1 ready';
+  } catch {
+    USE_OPENAI_STYLE = false;
+    metaEl.innerHTML = `API: <span class='ok'>${SERVER} /completion</span>`;
+    document.getElementById('apiBadge').textContent = '/completion ready';
+  }
+})();
+
+/* ===== Search filter & card helpers ===== */
+const q = document.getElementById('q');
+const cards = Array.from(document.querySelectorAll('#cards .card'));
+q && q.addEventListener('input', () => {
+  const s = q.value.toLowerCase();
+  cards.forEach(c => {
+    const t = (c.textContent).toLowerCase();
+    c.style.display = t.includes(s) ? '' : 'none';
+  });
+});
+cards.forEach(c=>{
+  c.addEventListener('click', e=>{
+    if (e.button===0) {
+      const topic = c.dataset.topic || c.querySelector('h3')?.textContent || "";
+      if (topic) document.getElementById('chatQ').value = topic;
+    }
+  });
+});
+
+/* ===== System prompts ===== */
+const TEACH_PROMPT = `You are Bondona Tutor – CBSE Class 9 Science Companion.
+Simple English. Teach with short stories and daily-life scenes.
+After every explanation, give a 3–4 question Mini-Quiz.
+When checking answers, mark each with ✅ or ❌ and add a one-line correction.
+Use EXACT sections:
+[EXPLANATION]
+[TINY_SKETCH]
+[MINI_QUIZ]
+[FAST_RECAP]`;
+
+const QUIZ_STRICT_PROMPT = `You are a careful exam designer for CBSE Class 9. Output must be EXACTLY as specified and self-consistent. Do NOT include extra commentary.`;
+
+/* ===== Core client with serverless-first strategy ===== */
+async function callChat(messages, {temperature=0.05, max_tokens=700, stop=null} = {}) {
+  // Prefer serverless endpoint when available (keeps keys off the client)
+  if (window.USE_SERVERLESS) {
+    const res = await fetch('/api/chat', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        // serverless expects full chat history and returns { reply: "..." }
+        messages,
+        temperature,
+        max_tokens
+      })
+    });
+    if (!res.ok) throw new Error(`API /api/chat HTTP ${res.status}`);
+    const data = await res.json();
+    return (data?.reply || '').trim();
+  }
+
+  // Fallback: local OpenAI-compatible or llama.cpp style
+  if (USE_OPENAI_STYLE) {
+    const body = { model:'llama-3.1-8b-instant', messages, temperature, max_tokens };
+    if (stop) body.stop = stop;
+    const res = await fetch(`${SERVER}/v1/chat/completions`, {
+      method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data?.choices?.[0]?.message?.content?.trim() || '';
+  } else {
+    const convo = messages.map(m=>{
+      const tag = m.role==='system'?'<|system|>':(m.role==='assistant'?'<|assistant|>':'<|user|>');
+      return `${tag}\n${m.content}</s>`;
+    }).join('\n') + `\n<|assistant|>\n`;
+    const res = await fetch(`${SERVER}/completion`, {
+      method:'POST', headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ prompt:convo, n_predict:max_tokens, temperature, top_p:0.9, repeat_penalty:1.08, stop:['</s>','<|user|>','<|assistant|>'] })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return (typeof data.content==='string'?data.content:(data.content||[]).map(c=>c.text).join('')).trim();
+  }
+}
+
+/* ===== Explain / Practice / Check ===== */
+const ans = document.getElementById('ans');
+const feedback = document.getElementById('feedback');
+const chatQ = document.getElementById('chatQ');
+const answers = document.getElementById('answers');
+const progress = document.getElementById('progress');
+let lastQuizBlock = '', lastTopic = '';
+
+function setProgress(t){ if(progress) progress.textContent = t; }
+function saveProgress(topic, score){
+  try{
+    localStorage.setItem('bondona_last_topic', topic||'');
+    localStorage.setItem('bondona_last_score', score||'');
+    setProgress(`Last topic: ${topic||'—'} • Last score: ${score||'—'}`);
+  }catch{}
+}
+(function initProgress(){
+  const t = localStorage.getItem('bondona_last_topic')||'';
+  const s = localStorage.getItem('bondona_last_score')||'';
+  if (t||s) setProgress(`Last topic: ${t||'—'} • Last score: ${s||'—'}`);
+})();
+
+async function explainTopic(topic){
+  const messages = [
+    {role:'system', content: TEACH_PROMPT},
+    {role:'user', content:
+`Explain this Class 9 topic in simple English using everyday examples.
+Then output exactly:
+[EXPLANATION]
+[TINY_SKETCH]
+[MINI_QUIZ]
+[FAST_RECAP]
+Topic: ${topic}`}
+  ];
+  return callChat(messages, {temperature:0.15, max_tokens:900});
+}
+
+async function practiceQuiz(topic){
+  const messages = [
+    {role:'system', content: QUIZ_STRICT_PROMPT},
+    {role:'user', content:
+`Create a Class 9 Practice Quiz on: ${topic}
+
+RULES (STRICT):
+- 5 questions ONLY.
+- Q1–Q3: MCQ with options A), B), C), D). Exactly ONE correct answer.
+- Q4–Q5: Short answer (a single number with units OR 1–3 keywords).
+- Align to NCERT level; avoid ambiguous wording.
+- DO NOT add any extra sections besides the ones below.
+
+Output EXACTLY:
+
+[QUIZ]
+1) <question>
+A) ...
+B) ...
+C) ...
+D) ...
+2) <question>
+A) ...
+B) ...
+C) ...
+D) ...
+3) <question>
+A) ...
+B) ...
+C) ...
+D) ...
+4) <question>
+5) <question>
+[ANSWER_KEY]
+1) <A/B/C/D>
+2) <A/B/C/D>
+3) <A/B/C/D>
+4) <target numeric w/ units OR keywords>
+5) <target numeric w/ units OR keywords>`}
+  ];
+  return callChat(messages, {temperature:0.05, max_tokens:800});
+}
+
+async function aiGrade(quizBlock, myAnswers){
+  const messages = [
+    {role:'system', content:`You are a strict but fair CBSE Class 9 grader. Follow the rubric exactly. Return ONLY the required sections.`},
+    {role:'assistant', content: quizBlock.slice(0,4000)},
+    {role:'user', content:
+`Grade my answers against the quiz and ANSWER_KEY above.
+
+RULES (STRICT):
+- For Q1–Q3 (MCQ): accept A/B/C/D only. If I wrote text, map it to the closest option; if unclear, mark ❌ and say "Expected <LETTER>.".
+- For Q4–Q5:
+  • If numeric: accept answers within ±2% or ±0.5 for small integers; units encouraged but not mandatory if value is correct.
+  • If keyword(s): accept case-insensitive matches; minor spelling mistakes okay if unambiguous.
+- Keep explanations one short line each.
+
+Return EXACTLY:
+[RESULTS]
+1) ✅/❌ – short correction
+2) ✅/❌ – short correction
+3) ✅/❌ – short correction
+4) ✅/❌ – short correction
+5) ✅/❌ – short correction
+[SCORE]
+x/5
+
+My Answers:
+${myAnswers.slice(0,1500)}`}
+  ];
+  return callChat(messages, {temperature:0.05, max_tokens:600});
+}
+
+function looksWellFormed(text){
+  return /\[RESULTS\][\s\S]*\[SCORE\][\s\S]*\/\d+\s*$/i.test(text||'');
+}
+
+async function fixFormat(raw){
+  const messages = [
+    {role:'system', content:'Reformat ONLY. Do NOT change judgments or score.'},
+    {role:'user', content:
+`Reformat this to EXACTLY:
+[RESULTS]
+1) ✅/❌ – note
+2) ...
+3) ...
+4) ...
+5) ...
+[SCORE]
+x/5
+
+TEXT:
+${raw.slice(0,3000)}`}
+  ];
+  return callChat(messages, {temperature:0.0, max_tokens:400});
+}
+
+/* ===== Wire buttons ===== */
+document.getElementById('btnExplain').onclick = async()=>{
+  const topic = (document.getElementById('chatQ').value||'').trim() || (q && q.value||'').trim() || 'Motion (speed vs velocity, acceleration)';
+  lastTopic = topic; ans.textContent = 'Teaching…'; feedback.textContent = '';
+  try{
+    const out = await explainTopic(topic);
+    ans.textContent = out || '(No response)';
+    lastQuizBlock = out;
+    answers.value = '1)\n2)\n3)\n4)\n5)';
+    saveProgress(topic,'');
+  }catch(e){ ans.textContent = `Can't reach AI (${SERVER}). ${(e&&e.message)||e}`; }
+};
+
+document.getElementById('btnPractice').onclick = async()=>{
+  const topic = (document.getElementById('chatQ').value||'').trim() || (q && q.value||'').trim() || 'Atoms and Molecules';
+  lastTopic = topic; ans.textContent = 'Building an AI quiz…'; feedback.textContent = '';
+  try{
+    const out = await practiceQuiz(topic);
+    ans.textContent = out || '(No response)';
+    lastQuizBlock = out;
+    answers.value = '1)\n2)\n3)\n4)\n5)';
+    saveProgress(topic,'');
+  }catch(e){ ans.textContent = `Can't reach AI (${SERVER}). ${(e&&e.message)||e}`; }
+};
+
+document.getElementById('btnDiagnostic').onclick = ()=>{
+  document.getElementById('chatQ').value =
+`Let's begin a short diagnostic test (6 questions).
+
+Physics
+1) Which is a vector: speed or velocity?
+2) A car’s speed rises from 10 -> 25 m/s in 3 s. Find acceleration.
+
+Chemistry
+3) Matter mainly exists in how many states?
+4) Simplest particle of an element?
+
+Biology
+5) Name one connective tissue.
+6) What do chloroplasts do?
+
+Answer like: 1-velocity, 2-5 m/s^2, 3-..., 4-..., 5-..., 6-...`;
+};
+
+document.getElementById('btnCheck').onclick = async()=>{
+  const mine = (answers.value||'').trim();
+  if (!lastQuizBlock){ feedback.textContent = 'Run Practice Quiz first to generate a strict quiz.'; return; }
+  if (!/\[ANSWER_KEY\]/i.test(lastQuizBlock)){ feedback.textContent = 'Use Practice Quiz (strict) before checking answers.'; return; }
+  if (!mine){ feedback.textContent = 'Write your answers above (1..5), then click Check.'; return; }
+  feedback.textContent = 'AI grading…';
+  try{
+    let out = await aiGrade(lastQuizBlock, mine);
+    if (!looksWellFormed(out)) out = await fixFormat(out);
+    feedback.textContent = out || '(No feedback)';
+    const m = out.match(/\[SCORE\]\s*([\d]+)\s*\/\s*([\d]+)/i);
+    if (m) saveProgress(lastTopic||'General', `${m[1]}/${m[2]}`);
+  }catch(e){ feedback.textContent = `AI grading failed: ${(e&&e.message)||e}`; }
+};
+
+/* ===== Tabs ===== */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.onclick = ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const which = tab.getAttribute('data-tab');
+    document.getElementById('lab-math').style.display = (which==='math')?'':'none';
+    document.getElementById('lab-chem').style.display = (which==='chem')?'':'none';
+    document.getElementById('lab-custom').style.display = (which==='custom')?'':'none';
+  };
+});
+
+/* ===== Lab explainers ===== */
+async function aiExplainPlain(prompt, max=700){
+  return callChat([
+    {role:'system', content:'Explain step-by-step with clear headings. Keep it Class 9 friendly. Include [WHY] reasoning and a quick recap.'},
+    {role:'user', content: prompt}
+  ], {temperature:0.2, max_tokens:max});
+}
+
+document.getElementById('explainMath').onclick = async()=>{
+  const t = (document.getElementById('mathInput').value||'').trim();
+  const out = document.getElementById('mathOut');
+  if (!t){ out.textContent = 'Type a math problem first.'; return; }
+  out.textContent = 'Explaining with AI…';
+  try{ out.textContent = await aiExplainPlain(`Solve this math problem clearly and show steps: ${t}`, 600) || '(No response)'; }
+  catch(e){ out.textContent = `AI error: ${(e&&e.message)||e}`; }
+};
+
+document.getElementById('explainChem').onclick = async()=>{
+  const t = (document.getElementById('chemInput').value||'').trim();
+  const out = document.getElementById('chemOut');
+  if (!t){ out.textContent = 'Type a chemistry equation/problem first.'; return; }
+  out.textContent = 'Explaining with AI…';
+  try{ out.textContent = await aiExplainPlain(`Solve and explain this chemistry task: ${t}`, 650) || '(No response)'; }
+  catch(e){ out.textContent = `AI error: ${(e&&e.message)||e}`; }
+};
+
+document.getElementById('explainCustom').onclick = async()=>{
+  const t = (document.getElementById('customInput').value||'').trim();
+  const out = document.getElementById('customOut');
+  if (!t){ out.textContent = 'Paste a problem first.'; return; }
+  out.textContent = 'Explaining with AI…';
+  try{
+    out.textContent = await callChat([
+      {role:'system', content:'Parse the problem type (math/chem). Show: [PLAN], [STEPS], [ANSWER], [TRY_SIMILAR]. Keep it Class 9 friendly.'},
+      {role:'user', content:t}
+    ], {temperature:0.22, max_tokens:800}) || '(No response)';
+  }catch(e){ out.textContent = `AI error: ${(e&&e.message)||e}`; }
+};
+
+/* ===== Media Dock ===== */
+const ytUrl = document.getElementById('ytUrl');
+const phetUrl = document.getElementById('phetUrl');
+const ytFrame = document.getElementById('ytFrame');
+const phetFrame = document.getElementById('phetFrame');
+
+document.getElementById('btnLoadMedia').onclick = ()=>{
+  const y = (ytUrl.value||'').trim();
+  const p = (phetUrl.value||'').trim();
+  if (y) {
+    let u = y;
+    try{
+      if (y.includes('watch?v=')) {
+        const id = new URL(y).searchParams.get('v');
+        if (id) u = `https://www.youtube.com/embed/${id}`;
+      } else if (/^https?:\/\/youtu\.be\//.test(y)) {
+        const id = y.split('/').pop();
+        if (id) u = `https://www.youtube.com/embed/${id}`;
+      }
+    }catch{}
+    ytFrame.src = u;
+  }
+  if (p) phetFrame.src = p;
+};
+document.getElementById('btnClearMedia').onclick = ()=>{
+  ytFrame.src = ''; phetFrame.src = ''; ytUrl.value=''; phetUrl.value='';
+};
+</script>
+</body>
+</html>

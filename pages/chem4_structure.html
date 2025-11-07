@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bondona Tutor — Chapter 4: Structure of the Atom (Tiny Explorers)</title>
+  <style>
+    :root{ --bg:#f6fbff; --card:#ffffff; --ink:#0b3b5a; --muted:#4d6b80; --accent:#26a6ff; --good:#14b86e; --bad:#ff4d6d; --ring:#d9eefb; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#e9f6ff 70%);color:var(--ink)}
+    .wrap{max-width:1000px;margin:auto;padding:20px}
+    .card{background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(13,71,161,.08);padding:20px}
+    h1{margin:0 0 6px 0}
+    .tag{display:inline-block;background:#eaf7ff;border-radius:999px;padding:4px 10px;color:#1673a6;font-size:12px}
+    .grid{display:grid;grid-template-columns: 1fr;gap:20px}
+    .speech{position:relative;background:#fff;border:2px solid #d9eefb;border-radius:18px;padding:16px;min-height:120px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(38,166,255,.24)}
+    button.ghost{background:#eaf7ff;color:#0b5a8a;box-shadow:none}
+    .muted{color:#4d6b80;font-size:13px}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff;color:#0b5a8a;font-size:12px}
+    .sim{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .panel{display:grid;grid-template-columns: 300px 1fr;gap:16px;align-items:stretch}
+    .atomView{position:relative;height:360px;border:2px dashed var(--ring);border-radius:16px;background:radial-gradient(circle at center, #ffffff 0, #f7fbff 70%)}
+    .nucleus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;background:#0b3b5a;color:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(13,71,161,.15)}
+    .nucleus small{display:block;font-weight:600;opacity:.9}
+    .ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid var(--ring);border-radius:50%;}
+    .ring.k{width:180px;height:180px}
+    .ring.l{width:260px;height:260px}
+    .ring.m{width:340px;height:340px}
+    .electron{position:absolute;width:22px;height:22px;border-radius:50%;background:#26a6ff;color:#fff;display:grid;place-items:center;font-weight:800;cursor:grab;user-select:none;touch-action:none;box-shadow:0 6px 14px rgba(38,166,255,.3)}
+    .electron::after{content:"e-";font-size:10px}
+    .dock{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .dock .electron{position:relative}
+    .status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+    .tile{background:#f8fcff;border:1px solid #d9eefb;border-radius:10px;padding:8px 10px;font-weight:700}
+    .phet{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    iframe.phet-embed{width:100%;height:520px;border:0;border-radius:12px}
+    .warn{background:#fffceb;border:1px solid #ffe08a;border-radius:10px;padding:10px}
+    .quiz{margin-top:18px;background:#fff;border:2px dashed #cfeeff;border-radius:16px;padding:14px}
+    .q{margin:10px 0}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Chapter 4: Structure of the Atom</h1>
+    <div class="tag">Hosted by <strong>Nucleo the Atom Center ⚛️</strong></div>
+
+    <div class="grid">
+      <!-- Story -->
+      <section>
+        <div class="speech" id="speech"></div>
+        <div class="controls">
+          <button id="btnPrev" class="ghost">◁ Prev</button>
+          <button id="btnNext">Next ▷</button>
+          <button id="btnSpeak">▶ Narrate (Male)</button>
+          <span class="muted" id="lineInfo"></span>
+        </div>
+      </section>
+
+      <!-- Shell-Filling Simulator -->
+      <section class="sim">
+        <h3>Lab: Fill the Electron Shells</h3>
+        <div class="panel">
+          <div>
+            <div class="pill" style="margin-bottom:8px">Pick an element (1–20)</div>
+            <select id="element" style="width:100%;padding:8px;border:2px solid #cfeeff;border-radius:10px;font-weight:700;color:#0b3b5a">
+              <option value="H">H — Hydrogen (1)</option>
+              <option value="He">He — Helium (2)</option>
+              <option value="Li">Li — Lithium (3)</option>
+              <option value="Be">Be — Beryllium (4)</option>
+              <option value="B">B — Boron (5)</option>
+              <option value="C">C — Carbon (6)</option>
+              <option value="N">N — Nitrogen (7)</option>
+              <option value="O">O — Oxygen (8)</option>
+              <option value="F">F — Fluorine (9)</option>
+              <option value="Ne">Ne — Neon (10)</option>
+              <option value="Na">Na — Sodium (11)</option>
+              <option value="Mg">Mg — Magnesium (12)</option>
+              <option value="Al">Al — Aluminium (13)</option>
+              <option value="Si">Si — Silicon (14)</option>
+              <option value="P">P — Phosphorus (15)</option>
+              <option value="S">S — Sulfur (16)</option>
+              <option value="Cl">Cl — Chlorine (17)</option>
+              <option value="Ar">Ar — Argon (18)</option>
+              <option value="K">K — Potassium (19)</option>
+              <option value="Ca">Ca — Calcium (20)</option>
+            </select>
+
+            <div class="status">
+              <div class="tile">Protons (p⁺): <span id="pCount">1</span></div>
+              <div class="tile">Neutrons (n⁰): <span id="nCount">0</span></div>
+              <div class="tile">Electrons (e⁻): <span id="eCount">1</span></div>
+              <div class="tile">Shells K–L–M: <span id="config">1–0–0</span></div>
+              <div class="tile">Valence e⁻: <span id="valence">1</span></div>
+              <div class="tile">Result: <span id="result">Try filling!</span></div>
+            </div>
+
+            <div class="controls" style="margin-top:8px">
+              <button id="auto" class="ghost">✨ Auto-Fill (2,8,8)</button>
+              <button id="clear" class="ghost">↺ Clear electrons</button>
+            </div>
+
+            <div class="pill" style="margin-top:10px">Drag electrons from the dock into the rings</div>
+            <div id="dock" class="dock"></div>
+          </div>
+
+          <div class="atomView" id="atomView" aria-label="Atom with nucleus and K,L,M rings">
+            <div class="nucleus" id="nucleus"><small>p⁺<span id="pIn"></span>  n⁰<span id="nIn"></span></small></div>
+            <div class="ring k" data-shell="K"></div>
+            <div class="ring l" data-shell="L"></div>
+            <div class="ring m" data-shell="M"></div>
+          </div>
+        </div>
+        <p class="muted">Rule for first 20 elements: Fill shells as <b>2, 8, 8</b> (K up to 2, L up to 8, M up to 8). Valence electrons are the ones in the outermost filled shell.</p>
+      </section>
+
+      <!-- PhET HTML5 Embed (web) -->
+      <section class="phet">
+        <h3>PhET: Build an Atom (HTML5)</h3>
+        <iframe
+          class="phet-embed"
+          title="PhET Build an Atom"
+          src="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html"
+          allow="fullscreen"
+        ></iframe>
+        <div class="warn" style="margin-top:10px">
+          For offline use, download the HTML5 sim folder and set the iframe <code>src</code> to your local path, e.g. <code>src="../phet/build-an-atom_en.html"</code>.
+        </div>
+      </section>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz"></section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// Story lines (5–10 yrs)
+// ----------------------
+const LINES = [
+  "Hello! I’m Nucleo, the atom’s center. I live in the nucleus!",
+  "In the nucleus sit protons (p⁺) and neutrons (n⁰). Protons are positive. Neutrons are neutral.",
+  "Electrons (e⁻) dance around in shells like K, L, M. They are negative.",
+  "The atomic number equals the number of protons. In a neutral atom, electrons = protons.",
+  "For the first 20 elements, we fill shells with the 2,8,8 rule: K gets up to 2, then L up to 8, then M up to 8.",
+  "The outermost shell’s electrons are valence electrons. They help atoms bond and make molecules!",
+  "Let’s pick an element and fill the shells together!"
+];
+
+// ----------------------
+// Simple data for 1–20 (common isotopes)
+// ----------------------
+const DATA = {
+  H:{Z:1,N:0}, He:{Z:2,N:2}, Li:{Z:3,N:4}, Be:{Z:4,N:5}, B:{Z:5,N:6}, C:{Z:6,N:6}, N:{Z:7,N:7}, O:{Z:8,N:8}, F:{Z:9,N:10}, Ne:{Z:10,N:10},
+  Na:{Z:11,N:12}, Mg:{Z:12,N:12}, Al:{Z:13,N:14}, Si:{Z:14,N:14}, P:{Z:15,N:16}, S:{Z:16,N:16}, Cl:{Z:17,N:18}, Ar:{Z:18,N:22}, K:{Z:19,N:20}, Ca:{Z:20,N:20}
+};
+
+// ----------------------
+// Quiz bank
+// ----------------------
+const QUIZ = [
+  {q:"Which particles live in the nucleus?",a:["Electrons","Protons and neutrons","Only protons"],correct:1},
+  {q:"Electrons are…",a:["Positive","Neutral","Negative"],correct:2},
+  {q:"For the first 20 elements, the shell rule is…",a:["3,5,7","2,8,8","1,2,3"],correct:1},
+  {q:"Valence electrons are in…",a:["The outermost shell","The nucleus","The middle of the atom"],correct:0}
+];
+
+// ----------------------
+// TTS (male-preferred)
+// ----------------------
+let currentIdx = 0; let voices = [];
+const speechBox = document.getElementById('speech');
+const lineInfo = document.getElementById('lineInfo');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+function renderLine(){ speechBox.textContent = LINES[currentIdx]; lineInfo.textContent = `Line ${currentIdx+1} of ${LINES.length}`; }
+function loadVoices(){ try{ voices = window.speechSynthesis.getVoices(); }catch(e){ voices = []; } }
+function pickMaleVoice(){ if(!voices.length) return null; const pref=/(male|daniel|george|brian|english male|barry|david|microsoft|google uk)/i; const en=v=>/en/i.test(v.lang); return voices.find(v=>pref.test(v.name+" "+v.lang)&&en(v))||voices.find(en)||voices[0]; }
+function speak(text){ if(!('speechSynthesis' in window)) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); loadVoices(); const v=pickMaleVoice(); if(v) u.voice=v; u.pitch=0.95; u.rate=0.98; window.speechSynthesis.speak(u);}catch(e){} }
+if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=()=>{ loadVoices(); }; }
+btnSpeak.addEventListener('click', ()=>{ speak(LINES[currentIdx]); });
+btnNext.addEventListener('click', ()=>{ if(currentIdx<LINES.length-1){ currentIdx++; renderLine(); } });
+btnPrev.addEventListener('click', ()=>{ if(currentIdx>0){ currentIdx--; renderLine(); } });
+
+// ----------------------
+// Quiz UI
+// ----------------------
+const qz = document.getElementById('quiz');
+function buildQuiz(){
+  let html = '<h3>Quiz Time! 🎉</h3>';
+  QUIZ.forEach((item,i)=>{
+    html += `<div class=\"q\"><b>${i+1}. ${item.q}</b><div>`;
+    item.a.forEach((opt,j)=>{
+      html += `<label style=\"display:block;margin:.25rem 0\"><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`;
+    });
+    html += '</div></div>';
+  });
+  html += `<div class='controls'><button id='btnCheck' class='good'>Check Answers</button><button id='btnReset' class='ghost'>Reset</button><span id='result' class='muted'></span></div>`;
+  qz.innerHTML = html;
+  document.getElementById('btnCheck').addEventListener('click', checkQuiz);
+  document.getElementById('btnReset').addEventListener('click', ()=>{ qz.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false); document.getElementById('result').textContent=''; });
+}
+function checkQuiz(){ let score=0; let answered=0; QUIZ.forEach((item,i)=>{ const chosen=qz.querySelector(`input[name='q${i}']:checked`); if(chosen){answered++; if(Number(chosen.value)===item.correct) score++;} }); const r=document.getElementById('result'); if(answered<QUIZ.length){ r.textContent='Pick an answer for each question.'; return; } r.textContent=(score===QUIZ.length)?'🌟 Perfect! You are a Tiny Science Explorer!':`Nice! You got ${score} of ${QUIZ.length}.`; }
+
+// ----------------------
+// Shell simulator
+// ----------------------
+const elementSel = document.getElementById('element');
+const pCount = document.getElementById('pCount');
+const nCount = document.getElementById('nCount');
+const eCount = document.getElementById('eCount');
+const config = document.getElementById('config');
+const valence = document.getElementById('valence');
+const result = document.getElementById('result');
+const nucleus = document.getElementById('nucleus');
+const pIn = document.getElementById('pIn');
+const nIn = document.getElementById('nIn');
+const atomView = document.getElementById('atomView');
+const dock = document.getElementById('dock');
+const autoBtn = document.getElementById('auto');
+const clearBtn = document.getElementById('clear');
+
+let electrons = []; // {el, shell:null|'K'|'L'|'M', x,y}
+
+function placeOnRing(e, shellIdx){
+  const ring = atomView.querySelector(shellIdx===0?'.ring.k':shellIdx===1?'.ring.l':'.ring.m');
+  const R = ring.getBoundingClientRect();
+  const A = atomView.getBoundingClientRect();
+  // position electron randomly on ring circumference
+  const angle = Math.random()*Math.PI*2;
+  const cx = R.left + R.width/2 - A.left;
+  const cy = R.top + R.height/2 - A.top;
+  const r  = R.width/2;
+  const x = cx + r*Math.cos(angle) - 11;
+  const y = cy + r*Math.sin(angle) - 11;
+  e.style.left = x+'px'; e.style.top = y+'px';
+}
+
+function rebuildDock(count){
+  dock.innerHTML=''; electrons=[];
+  for(let i=0;i<count;i++){
+    const d=document.createElement('div'); d.className='electron'; d.style.position='relative'; d.style.left='0'; d.style.top='0';
+    dock.appendChild(d);
+    const rec={el:d, shell:null, x:0, y:0}; electrons.push(rec);
+    enableDrag(rec);
+  }
+}
+
+function enableDrag(rec){
+  const el = rec.el; let dragging=false, dx=0, dy=0;
+  el.addEventListener('pointerdown', e=>{ dragging=true; el.setPointerCapture(e.pointerId); dx=e.clientX - (parseFloat(el.style.left)||0); dy=e.clientY - (parseFloat(el.style.top)||0); el.style.cursor='grabbing'; });
+  el.addEventListener('pointermove', e=>{ if(!dragging) return; let x=e.clientX-dx; let y=e.clientY-dy; // clamp inside atomView bounds
+    const R = atomView.getBoundingClientRect(); const W=22, H=22; x=Math.max(R.left,Math.min(R.right-W,x)); y=Math.max(R.top,Math.min(R.bottom-H,y)); el.style.position='absolute'; el.style.left=(x-R.left)+'px'; el.style.top=(y-R.top)+'px'; atomView.appendChild(el); });
+  el.addEventListener('pointerup', e=>{ dragging=false; el.releasePointerCapture(e.pointerId); el.style.cursor='grab'; snapToShell(rec); updateStatus(); });
+}
+
+function snapToShell(rec){
+  const el = rec.el; const rK = atomView.querySelector('.ring.k').getBoundingClientRect();
+  const rL = atomView.querySelector('.ring.l').getBoundingClientRect();
+  const rM = atomView.querySelector('.ring.m').getBoundingClientRect();
+  const bb = el.getBoundingClientRect();
+  const center = (rect)=>({x:rect.left+rect.width/2, y:rect.top+rect.height/2});
+  const dist = (a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  const cE = center(bb); const cK=center(rK), cL=center(rL), cM=center(rM);
+  const dK = Math.abs(dist(cE,cK) - rK.width/2);
+  const dL = Math.abs(dist(cE,cL) - rL.width/2);
+  const dM = Math.abs(dist(cE,cM) - rM.width/2);
+  const nearest = Math.min(dK,dL,dM);
+  const cap = [2,8,8];
+  let shellIdx = null;
+  if(nearest===dK) shellIdx=0; else if(nearest===dL) shellIdx=1; else shellIdx=2;
+  // capacity check
+  const countK = electrons.filter(e=>e.shell==='K').length;
+  const countL = electrons.filter(e=>e.shell==='L').length;
+  const countM = electrons.filter(e=>e.shell==='M').length;
+  if((shellIdx===0 && countK>=cap[0]) || (shellIdx===1 && countL>=cap[1]) || (shellIdx===2 && countM>=cap[2])){
+    // send back to dock
+    el.style.position='relative'; el.style.left='0'; el.style.top='0'; dock.appendChild(el); rec.shell=null; return;
+  }
+  // place on ring
+  rec.shell = shellIdx===0?'K':shellIdx===1?'L':'M';
+  placeOnRing(el, shellIdx);
+}
+
+function autoFill(Z){
+  // 2,8,8 for first 20
+  const arr=[0,0,0]; let left=Z; arr[0]=Math.min(2,left); left-=arr[0]; arr[1]=Math.min(8,left); left-=arr[1]; arr[2]=Math.min(8,left); left-=arr[2];
+  // build electrons exactly as counts
+  rebuildDock(Z);
+  let index=0; ['K','L','M'].forEach((shell,sidx)=>{
+    for(let i=0;i<arr[sidx];i++){
+      const rec = electrons[index++]; rec.shell=shell; placeOnRing(rec.el, sidx); atomView.appendChild(rec.el); rec.el.style.position='absolute';
+    }
+  });
+  updateStatus();
+}
+
+function readConfig(){
+  const k=electrons.filter(e=>e.shell==='K').length;
+  const l=electrons.filter(e=>e.shell==='L').length;
+  const m=electrons.filter(e=>e.shell==='M').length;
+  return [k,l,m];
+}
+
+function updateStatus(){
+  const sym = elementSel.value; const {Z,N} = DATA[sym];
+  const [k,l,m] = readConfig();
+  pCount.textContent = Z; nCount.textContent = N; eCount.textContent = Z; config.textContent = `${k}–${l}–${m}`;
+  pIn.textContent = Z; nIn.textContent = N;
+  // valence = electrons in last non-zero shell (or the highest filled among K,L,M)
+  const shells=[k,l,m]; let last=0; for(let i=shells.length-1;i>=0;i--){ if(shells[i]>0){ last=shells[i]; break; } }
+  valence.textContent = last;
+  // check correctness by 2,8,8
+  const ideal=[0,0,0]; let left=Z; ideal[0]=Math.min(2,left); left-=ideal[0]; ideal[1]=Math.min(8,left); left-=ideal[1]; ideal[2]=Math.min(8,left);
+  const ok = (k===ideal[0] && l===ideal[1] && m===ideal[2]);
+  result.textContent = ok ? '✅ Correct shell fill!' : 'Keep arranging…';
+}
+
+function onElementChange(){
+  const sym = elementSel.value; const {Z,N} = DATA[sym];
+  rebuildDock(Z);
+  // reset nucleus labels
+  pIn.textContent = Z; nIn.textContent = N;
+  updateStatus();
+}
+
+elementSel.addEventListener('change', onElementChange);
+autoBtn.addEventListener('click', ()=>{ const sym=elementSel.value; autoFill(DATA[sym].Z); });
+clearBtn.addEventListener('click', ()=>{ const sym=elementSel.value; rebuildDock(DATA[sym].Z); updateStatus(); });
+
+// ----------------------
+// Init after load
+// ----------------------
+window.addEventListener('load', ()=>{ renderLine(); buildQuiz(); onElementChange(); });
+</script>
+</body>
+</html>

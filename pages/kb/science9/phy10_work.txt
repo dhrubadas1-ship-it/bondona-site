@@ -1,0 +1,5 @@
+[R1] Work & Energy — Key Points
+• Work W = F·s (component along displacement); 1 J = 1 N·m.
+• KE = 1/2 m v^2; PE (near Earth) = m g h.
+• Power P = W/t; unit watt; 1 kW = 1000 W.
+• Energy conservation: total energy of an isolated system remains constant.

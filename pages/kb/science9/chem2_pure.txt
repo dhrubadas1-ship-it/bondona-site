@@ -1,0 +1,5 @@
+[R1] Is Matter Around Us Pure? — Key Points
+• Pure substances: elements, compounds; fixed composition, characteristic properties.
+• Mixtures: homogeneous (solutions) or heterogeneous (colloid/suspension).
+• Solution: particle size < 1 nm, no Tyndall effect; Colloid: 1–1000 nm, Tyndall effect; Suspension: > 1000 nm, settles.
+• Separation: filtration, evaporation, crystallization, distillation, fractional distillation, chromatography, centrifugation, separating funnel (immiscible).

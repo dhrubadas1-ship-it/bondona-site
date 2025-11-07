@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bondona Tutor — Chapter 3: Atoms and Molecules (Tiny Explorers)</title>
+  <style>
+    :root{ --bg:#f6fbff; --card:#ffffff; --ink:#0b3b5a; --muted:#4d6b80; --accent:#26a6ff; --good:#14b86e; --bad:#ff4d6d; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#e9f6ff 70%);color:var(--ink)}
+    .wrap{max-width:1000px;margin:auto;padding:20px}
+    .card{background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(13,71,161,.08);padding:20px}
+    h1{margin:0 0 6px 0}
+    .tag{display:inline-block;background:#eaf7ff;border-radius:999px;padding:4px 10px;color:#1673a6;font-size:12px}
+    .grid{display:grid;grid-template-columns: 1fr;gap:20px}
+    .speech{position:relative;background:#fff;border:2px solid #d9eefb;border-radius:18px;padding:16px;min-height:120px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(38,166,255,.24)}
+    button.ghost{background:#eaf7ff;color:#0b5a8a;box-shadow:none}
+    .muted{color:#4d6b80;font-size:13px}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff;color:#0b5a8a;font-size:12px}
+    .sim{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .sim .panel{display:grid;grid-template-columns: 280px 1fr;gap:16px;align-items:stretch}
+    .palette{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .atomBtn{display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;border:2px solid #cfeeff;background:#f7fbff;color:#0b3b5a;font-weight:800;cursor:pointer}
+    .dot{width:14px;height:14px;border-radius:50%}
+    .box{position:relative;height:300px;border-radius:14px;border:2px dashed #cfeeff;overflow:hidden;background:linear-gradient(#ffffff,#f7fbff)}
+    .atom{position:absolute;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:#fff;font-weight:800;cursor:grab;user-select:none;touch-action:none;animation:bob 2.4s ease-in-out infinite}
+    @keyframes bob{0%{transform:translateY(0)}50%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .tray{display:flex;gap:8px;flex-wrap:wrap}
+    .tile{background:#f8fcff;border:1px solid #d9eefb;border-radius:10px;padding:8px 10px;font-weight:700}
+    .quiz{margin-top:18px;background:#fff;border:2px dashed #cfeeff;border-radius:16px;padding:14px}
+    .q{margin:10px 0}
+    .phet{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    iframe.phet-embed{width:100%;height:520px;border:0;border-radius:12px}
+    .warn{background:#fffceb;border:1px solid #ffe08a;border-radius:10px;padding:10px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Chapter 3: Atoms and Molecules</h1>
+    <div class="tag">Hosted by <strong>Sparky the Shiny Atom ⚡</strong></div>
+
+    <div class="grid">
+      <!-- Story -->
+      <section>
+        <div class="speech" id="speech"></div>
+        <div class="controls">
+          <button id="btnPrev" class="ghost">◁ Prev</button>
+          <button id="btnNext">Next ▷</button>
+          <button id="btnSpeak">▶ Narrate (Male)</button>
+          <span class="muted" id="lineInfo"></span>
+        </div>
+      </section>
+
+      <!-- Simulator -->
+      <section class="sim">
+        <h3>Lab: Build a Molecule</h3>
+        <div class="panel">
+          <div>
+            <div class="pill" style="margin-bottom:8px">Valency cheatsheet</div>
+            <div class="tray">
+              <span class="pill">H (Hydrogen) — 1</span>
+              <span class="pill">O (Oxygen) — 2</span>
+              <span class="pill">C (Carbon) — 4</span>
+              <span class="pill">Na (Sodium) — 1</span>
+              <span class="pill">Cl (Chlorine) — 1</span>
+            </div>
+            <div style="height:8px"></div>
+            <div class="palette">
+              <div class="atomBtn" data-el="H" data-color="#26a6ff"><span class="dot" style="background:#26a6ff"></span> Add H</div>
+              <div class="atomBtn" data-el="O" data-color="#ff4d6d"><span class="dot" style="background:#ff4d6d"></span> Add O</div>
+              <div class="atomBtn" data-el="C" data-color="#14b86e"><span class="dot" style="background:#14b86e"></span> Add C</div>
+              <div class="atomBtn" data-el="Na" data-color="#a26bff"><span class="dot" style="background:#a26bff"></span> Add Na</div>
+              <div class="atomBtn" data-el="Cl" data-color="#f5b301"><span class="dot" style="background:#f5b301"></span> Add Cl</div>
+              <button id="bond" class="atomBtn" style="justify-content:center">🔗 Bond!</button>
+            </div>
+            <div class="legend">
+              <span class="pill">Recipes: H₂, O₂, CO₂, H₂O, NaCl</span>
+              <button id="reset" class="ghost">Reset</button>
+            </div>
+            <div class="status" style="margin-top:8px">
+              <div class="tile">Made: <span id="made">—</span></div>
+              <div class="tile">Counts → H:<span id="hC">0</span> O:<span id="oC">0</span> C:<span id="cC">0</span> Na:<span id="naC">0</span> Cl:<span id="clC">0</span></div>
+            </div>
+          </div>
+          <div class="box" id="box" aria-label="Workspace: drag atoms and press Bond to form molecules"></div>
+        </div>
+        <p class="muted">Tip: Drag atoms inside the workspace. Press <b>Bond!</b> to join nearby atoms into molecules using the recipes. Example: 2 H + 1 O → H₂O, 1 C + 2 O → CO₂, 1 Na + 1 Cl → NaCl. Try making H₂ and O₂ too.</p>
+      </section>
+
+      <!-- PhET HTML5 Embed (web) -->
+      <section class="phet">
+        <h3>PhET: Build a Molecule (HTML5)</h3>
+        <iframe
+          class="phet-embed"
+          title="PhET Build a Molecule"
+          src="https://phet.colorado.edu/sims/html/build-a-molecule/latest/build-a-molecule_en.html"
+          allow="fullscreen"
+        ></iframe>
+        <div class="warn" style="margin-top:10px">
+          If the sim does not load offline: download the HTML5 sim folder and set the iframe <code>src</code> to your local path, e.g. <code>src="../phet/build-a-molecule_en.html"</code>.
+        </div>
+      </section>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz"></section>
+    </div>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// Story lines (5–10 yrs)
+// ----------------------
+const LINES = [
+  "Zap! I’m Sparky the Shiny Atom. I’m super tiny — smaller than dust!",
+  "Atoms are building blocks. Many atoms join hands to make everything around you.",
+  "When atoms team up, they make molecules — like a family holding hands.",
+  "Hydrogen is H, Oxygen is O, Carbon is C. These are symbols that stand for atoms.",
+  "If two of the same atoms join, we get a molecule like H₂ or O₂. Those little numbers are counts.",
+  "Different atoms can join to make new things: 2 H + 1 O gives water (H₂O). 1 C + 2 O gives carbon dioxide (CO₂).",
+  "How do atoms know how many hands to hold? That idea is called valency — H has 1, O has 2, C has 4, Na has 1, Cl has 1.",
+  "We write formulas from valency, like Na (1) + Cl (1) → NaCl, or Ca (2) + Cl (1) → CaCl₂ (another example).",
+  "Dalton said: atoms are tiny, can’t be created or destroyed in a reaction, and combine in simple whole-number ratios.",
+  "Law of conservation of mass: mass before and after a reaction is the same. Law of constant proportions: a compound always has the same fixed ratio of atoms.",
+  "Let’s build some molecules together!"
+];
+
+// ----------------------
+// Quiz bank
+// ----------------------
+const QUIZ = [
+  {q:"Atoms join to make…",a:["Music","Molecules","Mountains"],correct:1},
+  {q:"The symbol for Oxygen is…",a:["O","Ox","Og"],correct:0},
+  {q:"How many H in water (H₂O)?",a:["1","2","3"],correct:1},
+  {q:"CO₂ means…",a:["1 C and 1 O","1 C and 2 O","2 C and 1 O"],correct:1},
+  {q:"Valency tells…",a:["How many hands an atom can hold","How loud it shouts","Its color"],correct:0},
+  {q:"Which law says mass stays the same in a reaction?",a:["Gravity","Conservation of mass","Constant speed"],correct:1}
+];
+
+// ----------------------
+// TTS (male-preferred)
+// ----------------------
+let currentIdx = 0; let voices = [];
+const speechBox = document.getElementById('speech');
+const lineInfo = document.getElementById('lineInfo');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+
+function renderLine(){ speechBox.textContent = LINES[currentIdx]; lineInfo.textContent = `Line ${currentIdx+1} of ${LINES.length}`; }
+function loadVoices(){ try{ voices = window.speechSynthesis.getVoices(); }catch(e){ voices = []; } }
+function pickMaleVoice(){ if(!voices.length) return null; const pref=/(male|daniel|george|brian|english male|barry|david|microsoft|google uk)/i; const en=v=>/en/i.test(v.lang); return voices.find(v=>pref.test(v.name+" "+v.lang)&&en(v))||voices.find(en)||voices[0]; }
+function speak(text){ if(!('speechSynthesis' in window)) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); loadVoices(); const v=pickMaleVoice(); if(v) u.voice=v; u.pitch=0.95; u.rate=0.98; window.speechSynthesis.speak(u);}catch(e){} }
+if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=()=>{ loadVoices(); }; }
+btnSpeak.addEventListener('click', ()=>{ speak(LINES[currentIdx]); });
+btnNext.addEventListener('click', ()=>{ if(currentIdx<LINES.length-1){ currentIdx++; renderLine(); } });
+btnPrev.addEventListener('click', ()=>{ if(currentIdx>0){ currentIdx--; renderLine(); } });
+renderLine();
+
+// ----------------------
+// Build Quiz
+// ----------------------
+const qz = document.getElementById('quiz');
+function buildQuiz(){
+  let html = '<h3>Quiz Time! 🎉</h3>';
+  QUIZ.forEach((item,i)=>{
+    html += `<div class=\"q\"><b>${i+1}. ${item.q}</b><div>`;
+    item.a.forEach((opt,j)=>{
+      html += `<label style=\"display:block;margin:.25rem 0\"><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`;
+    });
+    html += '</div></div>';
+  });
+  html += `<div class='controls'><button id='btnCheck' class='good'>Check Answers</button><button id='btnReset' class='ghost'>Reset</button><span id='result' class='muted'></span></div>`;
+  qz.innerHTML = html;
+  document.getElementById('btnCheck').addEventListener('click', checkQuiz);
+  document.getElementById('btnReset').addEventListener('click', ()=>{ qz.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false); document.getElementById('result').textContent=''; });
+}
+function checkQuiz(){ let score=0; let answered=0; QUIZ.forEach((item,i)=>{ const chosen=qz.querySelector(`input[name='q${i}']:checked`); if(chosen){answered++; if(Number(chosen.value)===item.correct) score++;} }); const r=document.getElementById('result'); if(answered<QUIZ.length){ r.textContent='Pick an answer for each question.'; return; } r.textContent=(score===QUIZ.length)?'🌟 Perfect! You are a Tiny Science Explorer!':`Nice! You got ${score} of ${QUIZ.length}.`; }
+buildQuiz();
+
+// ----------------------
+// Build-a-Molecule Simulator
+// ----------------------
+const box = document.getElementById('box');
+const made = document.getElementById('made');
+const counters = {H:document.getElementById('hC'), O:document.getElementById('oC'), C:document.getElementById('cC'), Na:document.getElementById('naC'), Cl:document.getElementById('clC')};
+let atoms = [];
+
+const colors = {H:'#26a6ff', O:'#ff4d6d', C:'#14b86e', Na:'#a26bff', Cl:'#f5b301'};
+const mass = {H:1, O:16, C:12, Na:23, Cl:35.5};
+const recipes = [
+  {name:'H₂', need:{H:2}},
+  {name:'O₂', need:{O:2}},
+  {name:'H₂O', need:{H:2,O:1}},
+  {name:'CO₂', need:{C:1,O:2}},
+  {name:'NaCl', need:{Na:1,Cl:1}},
+];
+
+function addAtom(sym){
+  const d=document.createElement('div');
+  d.className='atom'; d.textContent=sym; d.style.background=colors[sym];
+  const x=Math.random()*(box.clientWidth-40)+5; const y=Math.random()*(box.clientHeight-40)+5;
+  d.style.left=x+'px'; d.style.top=y+'px';
+  box.appendChild(d);
+  const a={el:d, sym, x, y, ox:x, oy:y, dragging:false};
+  atoms.push(a); updateCounts();
+
+  d.addEventListener('pointerdown', e=>{ a.dragging=true; d.setPointerCapture(e.pointerId); a.dx=e.clientX-a.x; a.dy=e.clientY-a.y; d.style.cursor='grabbing'; });
+  d.addEventListener('pointermove', e=>{ if(!a.dragging) return; a.x=e.clientX-a.dx; a.y=e.clientY-a.dy; clamp(a); d.style.left=a.x+'px'; d.style.top=a.y+'px'; });
+  d.addEventListener('pointerup', e=>{ a.dragging=false; d.releasePointerCapture(e.pointerId); d.style.cursor='grab'; });
+}
+
+function clamp(a){
+  const r=18; a.x=Math.max(0,Math.min(a.x, box.clientWidth-2*r)); a.y=Math.max(0,Math.min(a.y, box.clientHeight-2*r));
+}
+
+function updateCounts(){
+  const counts={H:0,O:0,C:0,Na:0,Cl:0}; atoms.forEach(a=>counts[a.sym]++);
+  Object.keys(counters).forEach(k=>{ counters[k].textContent = counts[k]; });
+}
+
+function reset(){ atoms.forEach(a=>a.el.remove()); atoms=[]; updateCounts(); made.textContent='—'; }
+
+function bond(){
+  // Greedy recipe matching based on counts (ignores positions to keep simple for kids)
+  const counts={}; atoms.forEach(a=>{ counts[a.sym]=(counts[a.sym]||0)+1; });
+  const used={}; let madeList=[];
+  recipes.forEach(r=>{
+    while(true){
+      let can=true; for(const k in r.need){ if((counts[k]||0) < r.need[k]){ can=false; break; } }
+      if(!can) break;
+      // consume
+      for(const k in r.need){ counts[k]-=r.need[k]; }
+      madeList.push(r.name);
+      // remove actual atoms from box
+      for(const k in r.need){
+        let need=r.need[k];
+        for(let i=atoms.length-1; i>=0 && need>0; i--){ if(atoms[i].sym===k){ atoms[i].el.remove(); atoms.splice(i,1); need--; } }
+      }
+    }
+  });
+  if(madeList.length){ made.textContent = madeList.join(', '); } else { made.textContent = 'Try adding atoms to match a recipe!'; }
+  updateCounts();
+}
+
+// Hook buttons
+Array.from(document.querySelectorAll('.atomBtn')).forEach(btn=>{
+  const sym=btn.getAttribute('data-el');
+  if(sym){ btn.addEventListener('click', ()=> addAtom(sym)); }
+});
+
+document.getElementById('bond').addEventListener('click', bond);
+document.getElementById('reset').addEventListener('click', reset);
+
+// Robust init to avoid race conditions
+window.addEventListener('load', ()=>{ renderLine(); buildQuiz(); });
+</script>
+</body>
+</html>

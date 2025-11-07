@@ -1,0 +1,5 @@
+[R1] Atoms and Molecules — Key Points
+• Laws: Conservation of mass; Constant proportions (fixed ratio in compounds).
+• Atomic mass (u); Molecular mass = sum of atomic masses.
+• Mole: 1 mol = 6.022×10^23 particles. n (mol) = mass (g) / molar mass (g/mol).
+• Valency method to write formulae; practice with polyatomic ions (SO4^2-, NO3^-, CO3^2-).

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bondona Tutor — Chapter 2: Is Matter Around Us Pure? (Tiny Explorers)</title>
+  <style>
+    :root{ --bg:#f6fbff; --card:#ffffff; --ink:#0b3b5a; --muted:#4d6b80; --accent:#26a6ff; --good:#14b86e; --bad:#ff4d6d; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#e9f6ff 70%);color:var(--ink)}
+    .wrap{max-width:1000px;margin:auto;padding:20px}
+    .card{background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(13,71,161,.08);padding:20px}
+    h1{margin:0 0 6px 0}
+    .tag{display:inline-block;background:#eaf7ff;border-radius:999px;padding:4px 10px;color:#1673a6;font-size:12px}
+    .grid{display:grid;grid-template-columns: 1fr;gap:20px}
+    .speech{position:relative;background:#fff;border:2px solid #d9eefb;border-radius:18px;padding:16px;min-height:120px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(38,166,255,.24)}
+    button.ghost{background:#eaf7ff;color:#0b5a8a;box-shadow:none}
+    .muted{color:var(--muted);font-size:13px}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff;color:#0b5a8a;font-size:12px}
+    .sim{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .sim .panel{display:grid;grid-template-columns: 280px 1fr;gap:16px;align-items:stretch}
+    .box{position:relative;height:240px;border-radius:14px;border:2px dashed #cfeeff;overflow:hidden;background:linear-gradient(#ffffff,#f7fbff)}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+    .status .item{background:#f8fcff;border:1px solid #d9eefb;border-radius:10px;padding:8px}
+    .quiz{margin-top:18px;background:#fff;border:2px dashed #cfeeff;border-radius:16px;padding:14px}
+    .q{margin:10px 0}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Chapter 2: Is Matter Around Us Pure?</h1>
+    <div class="tag">Hosted by <strong>Dusty the Tiny Grain 🌾</strong></div>
+
+    <div class="grid">
+      <!-- Story -->
+      <section>
+        <div class="speech" id="speech"></div>
+        <div class="controls">
+          <button id="btnPrev" class="ghost">◁ Prev</button>
+          <button id="btnNext">Next ▷</button>
+          <button id="btnSpeak">▶ Narrate (Male)</button>
+          <span class="muted" id="lineInfo"></span>
+        </div>
+      </section>
+
+      <!-- Simulator -->
+      <section class="sim">
+        <h3>Lab: Solution vs. Colloid vs. Suspension</h3>
+        <div class="panel">
+          <div>
+            <label class="pill">Particle size: <span id="sizeLabel">Small (Solution)</span></label>
+            <input id="size" type="range" min="0" max="2" value="0" step="1" style="width:100%">
+            <div class="muted" style="margin-top:6px">0 = Small (Solution), 1 = Medium (Colloid), 2 = Large (Suspension)</div>
+
+            <label class="pill" style="margin-top:10px;display:inline-block">Concentration: <span id="concLabel">Low</span></label>
+            <input id="conc" type="range" min="1" max="5" value="2" step="1" style="width:100%">
+
+            <div class="legend">
+              <label class="pill"><input id="torch" type="checkbox"> Shine Torch (Tyndall test)</label>
+              <button id="rest" class="ghost">⏸ Let it rest</button>
+              <button id="shake" class="ghost">↻ Shake</button>
+            </div>
+
+            <div class="status">
+              <div class="item"><b>Clarity:</b> <span id="clarity">Clear</span></div>
+              <div class="item"><b>Tyndall effect:</b> <span id="tyndall">No</span></div>
+              <div class="item"><b>Settling on rest:</b> <span id="settle">No</span></div>
+              <div class="item"><b>Filter paper:</b> <span id="filter">Passes</span></div>
+            </div>
+          </div>
+
+          <div class="box" id="box" aria-label="Mixture particle box with light beam"></div>
+        </div>
+        <p class="muted">Try it: Small = **Solution** (clear, no Tyndall, no settling). Medium = **Colloid** (milky, Tyndall yes, no settling). Large = **Suspension** (cloudy, Tyndall yes, settles, filter stops). The torch makes the beam visible only if particles are big enough to scatter light.</p>
+      </section>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz"></section>
+    </div>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// Story lines (5–10 yrs)
+// ----------------------
+const LINES = [
+  "Hello! I’m Dusty the Tiny Grain. I love to mix, stir, and help you spot what’s pure!",
+  "A pure substance has just one kind of particle — like only water, or only salt.",
+  "A mixture has two or more things stirred together — like salt in water, sand in water, or milk.",
+  "Some mixtures look the same everywhere. We call them solutions — like salty water.",
+  "Some mixtures look a little cloudy and don’t settle. That team is colloids — like milk or fog.",
+  "Some mixtures are very cloudy and settle down if you wait. That team is suspensions — like muddy water.",
+  "How do we tell them apart? We can check clarity, use a torch for the Tyndall effect, let them rest, and try a filter!",
+  "Solutions are clear, show no Tyndall effect, don’t settle, and pass through filter paper.",
+  "Colloids look milky, show the Tyndall effect, don’t settle, and pass through filter paper.",
+  "Suspensions are cloudy, show strong Tyndall effect, settle on rest, and get stopped by filter paper.",
+  "Great! Now let’s play with particle size and light to see the differences!"
+];
+
+// ----------------------
+// Quiz bank
+// ----------------------
+const QUIZ = [
+  {q:"A pure substance has…",a:["Many kinds of particles","Only one kind of particle","No particles"],correct:1},
+  {q:"Which mixture looks the same everywhere?",a:["Solution","Colloid","Suspension"],correct:0},
+  {q:"Which one shows the Tyndall effect?",a:["Only solution","Colloid (and suspension)","None of them"],correct:1},
+  {q:"Which one settles on resting?",a:["Solution","Colloid","Suspension"],correct:2},
+  {q:"Which one is stopped by filter paper?",a:["Solution","Suspension","Both"],correct:1},
+  {q:"Milk is an example of a…",a:["Solution","Colloid","Suspension"],correct:1},
+  {q:"Salty water is a…",a:["Solution","Colloid","Suspension"],correct:0}
+];
+
+// ----------------------
+// TTS (male-preferred)
+// ----------------------
+let currentIdx = 0; let voices = [];
+const speechBox = document.getElementById('speech');
+const lineInfo = document.getElementById('lineInfo');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+
+function renderLine(){ speechBox.textContent = LINES[currentIdx]; lineInfo.textContent = `Line ${currentIdx+1} of ${LINES.length}`; }
+function loadVoices(){ try{ voices = window.speechSynthesis.getVoices(); }catch(e){ voices = []; } }
+function pickMaleVoice(){ if(!voices.length) return null; const pref=/(male|daniel|george|brian|english male|barry|david|microsoft|google uk)/i; const en=v=>/en/i.test(v.lang); return voices.find(v=>pref.test(v.name+" "+v.lang)&&en(v))||voices.find(en)||voices[0]; }
+function speak(text){ if(!('speechSynthesis' in window)) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); loadVoices(); const v=pickMaleVoice(); if(v) u.voice=v; u.pitch=0.95; u.rate=0.98; window.speechSynthesis.speak(u);}catch(e){} }
+if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=()=>{ loadVoices(); }; }
+btnSpeak.addEventListener('click', ()=>{ speak(LINES[currentIdx]); });
+btnNext.addEventListener('click', ()=>{ if(currentIdx<LINES.length-1){ currentIdx++; renderLine(); } });
+btnPrev.addEventListener('click', ()=>{ if(currentIdx>0){ currentIdx--; renderLine(); } });
+renderLine();
+
+// ----------------------
+// Build Quiz
+// ----------------------
+const qz = document.getElementById('quiz');
+function buildQuiz(){
+  let html = '<h3>Quiz Time! 🎉</h3>';
+  QUIZ.forEach((item,i)=>{
+    html += `<div class=\"q\"><b>${i+1}. ${item.q}</b><div>`;
+    item.a.forEach((opt,j)=>{
+      html += `<label style=\"display:block;margin:.25rem 0\"><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`;
+    });
+    html += '</div></div>';
+  });
+  html += `<div class='controls'><button id='btnCheck' class='good'>Check Answers</button><button id='btnReset' class='ghost'>Reset</button><span id='result' class='muted'></span></div>`;
+  qz.innerHTML = html;
+  document.getElementById('btnCheck').addEventListener('click', checkQuiz);
+  document.getElementById('btnReset').addEventListener('click', ()=>{ qz.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false); document.getElementById('result').textContent=''; });
+}
+function checkQuiz(){ let score=0; let answered=0; QUIZ.forEach((item,i)=>{ const chosen=qz.querySelector(`input[name='q${i}']:checked`); if(chosen){answered++; if(Number(chosen.value)===item.correct) score++;} }); const r=document.getElementById('result'); if(answered<QUIZ.length){ r.textContent='Pick an answer for each question.'; return; } r.textContent=(score===QUIZ.length)?'🌟 Perfect! You are a Tiny Science Explorer!':`Nice! You got ${score} of ${QUIZ.length}.`; }
+buildQuiz();
+
+// ----------------------
+// Mixture Simulator (particle size + Tyndall + settling)
+// ----------------------
+const box = document.getElementById('box');
+const size = document.getElementById('size');
+const sizeLabel = document.getElementById('sizeLabel');
+const conc = document.getElementById('conc');
+const concLabel = document.getElementById('concLabel');
+const torch = document.getElementById('torch');
+const restBtn = document.getElementById('rest');
+const shakeBtn = document.getElementById('shake');
+const clarity = document.getElementById('clarity');
+const tyndall = document.getElementById('tyndall');
+const settle = document.getElementById('settle');
+const filter = document.getElementById('filter');
+
+let particles=[]; let resting=false; let beam=null;
+
+function mixtureType(){
+  const s = Number(size.value);
+  if(s===0) return 'solution';
+  if(s===1) return 'colloid';
+  return 'suspension';
+}
+
+function updateLabels(){
+  const type = mixtureType();
+  sizeLabel.textContent = (type==='solution')? 'Small (Solution)' : (type==='colloid'? 'Medium (Colloid)' : 'Large (Suspension)');
+  concLabel.textContent = ['Very low','Low','Medium','High','Very high'][Number(conc.value)-1];
+  if(type==='solution'){
+    clarity.textContent='Clear'; tyndall.textContent= torch.checked? 'No' : 'No'; settle.textContent='No'; filter.textContent='Passes';
+  } else if(type==='colloid'){
+    clarity.textContent='Milky'; tyndall.textContent= torch.checked? 'Yes' : '—'; settle.textContent='No'; filter.textContent='Passes';
+  } else { // suspension
+    clarity.textContent='Cloudy'; tyndall.textContent= torch.checked? 'Yes (strong)' : '—'; settle.textContent= resting? 'Yes' : 'Soon'; filter.textContent='Stopped';
+  }
+}
+
+function resetBox(){ box.innerHTML=''; particles=[]; beam=null; }
+
+function createBeam(){
+  if(!torch.checked) return;
+  const b=document.createElement('div');
+  b.style.position='absolute'; b.style.left='0'; b.style.top='0'; b.style.bottom='0'; b.style.width='100%';
+  b.style.background='linear-gradient(90deg, rgba(255,255,180,0.0), rgba(255,255,180,0.35), rgba(255,255,180,0.0))';
+  b.style.pointerEvents='none';
+  box.appendChild(b); beam=b;
+}
+
+function makeParticles(){
+  const type=mixtureType();
+  const count = 25 + (Number(conc.value)*10);
+  const base = type==='solution'? 2 : type==='colloid'? 6 : 12; // px radius
+  for(let i=0;i<count;i++){
+    const d=document.createElement('div');
+    d.style.position='absolute'; d.style.borderRadius='50%';
+    d.style.width=d.style.height=(base + Math.random()* (type==='suspension'?6:3))+'px';
+    d.style.background = type==='solution'? 'rgba(38,166,255,0.15)' : type==='colloid'? 'rgba(38,166,255,0.45)' : 'rgba(38,166,255,0.85)';
+    d.style.filter = torch.checked && type!=='solution' ? 'brightness(1.2)' : 'none';
+    const x = Math.random()*(box.clientWidth-20)+10;
+    const y = Math.random()*(box.clientHeight-20)+10;
+    d.style.transform = `translate(${x}px, ${y}px)`;
+    box.appendChild(d);
+    particles.push({el:d, x, y, vx:(Math.random()*2-1)* (type==='solution'?0.2: type==='colloid'?0.5:0.3), vy:(Math.random()*2-1)* (type==='solution'?0.2: type==='colloid'?0.5:0.3)});
+  }
+}
+
+function buildMixture(){
+  resetBox(); createBeam(); makeParticles(); updateLabels(); resting=false;
+}
+
+function tick(){
+  const type=mixtureType();
+  particles.forEach(p=>{
+    if(resting && type==='suspension'){
+      p.vx *= 0.95; p.vy = Math.min(p.vy+0.02, 0.6); // settle downward slowly
+    }
+    p.x += p.vx; p.y += p.vy;
+    const r=10;
+    if(p.x < 0){ p.x = 0; p.vx*=-1; }
+    if(p.y < 0){ p.y = 0; p.vy*=-1; }
+    if(p.x > box.clientWidth-r){ p.x = box.clientWidth-r; p.vx*=-1; }
+    if(p.y > box.clientHeight-r){ p.y = box.clientHeight-r; p.vy*=-1; }
+    p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+  });
+  requestAnimationFrame(tick);
+}
+
+size.addEventListener('input', buildMixture);
+conc.addEventListener('input', buildMixture);
+torch.addEventListener('change', buildMixture);
+restBtn.addEventListener('click', ()=>{ resting=true; updateLabels(); });
+shakeBtn.addEventListener('click', ()=>{ resting=false; particles.forEach(p=>{ p.vx=(Math.random()*2-1); p.vy=(Math.random()*2-1); }); updateLabels(); });
+
+// init
+buildMixture(); requestAnimationFrame(tick);
+</script>
+</body>
+</html>

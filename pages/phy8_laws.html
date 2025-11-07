@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bondona Tutor — Physics • Chapter 8: Force and Laws of Motion</title>
+  <style>
+    :root{ --bg:#f6fbff; --card:#ffffff; --ink:#0b3b5a; --muted:#4d6b80; --accent:#26a6ff; --good:#14b86e; --bad:#ff4d6d; --ring:#d9eefb; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#e9f6ff 70%);color:var(--ink)}
+    .wrap{max-width:1100px;margin:auto;padding:20px}
+    .card{background:var(--card);border-radius:20px;box-shadow:0 10px 30px rgba(13,71,161,.08);padding:20px}
+    h1{margin:0 0 6px 0}
+    .tag{display:inline-block;background:#eaf7ff;border-radius:999px;padding:4px 10px;color:#1673a6;font-size:12px}
+    .grid{display:grid;grid-template-columns: 1fr;gap:20px}
+    .speech{position:relative;background:#fff;border:2px solid #d9eefb;border-radius:18px;padding:16px;min-height:120px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{appearance:none;border:none;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(38,166,255,.24)}
+    button.ghost{background:#eaf7ff;color:#0b5a8a;box-shadow:none}
+    .muted{color:#4d6b80;font-size:13px}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff;color:#0b3b5a;font-size:12px}
+    .sim{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .panel{display:grid;grid-template-columns: 320px 1fr;gap:16px;align-items:stretch}
+    .explorer{position:relative;height:480px;border:2px dashed var(--ring);border-radius:16px;overflow:hidden;background:radial-gradient(circle at center, #ffffff 0, #f7fbff 70%)}
+    .viewport{position:absolute;left:0;top:0;transform-origin:0 0;cursor:grab;will-change:transform;backface-visibility:hidden;transform:translateZ(0)}
+    .viewport:active{cursor:grabbing}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .side{background:#f8fcff;border:1px solid #d9eefb;border-radius:12px;padding:10px}
+    .side h4{margin:0 0 6px 0}
+    .side .row{display:grid;grid-template-columns: 1fr auto;align-items:center;gap:8px}
+    .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+    svg *{vector-effect:non-scaling-stroke;shape-rendering:geometricPrecision}
+    svg .org{cursor:pointer;transition:filter .2s ease}
+    svg .org:hover{filter:brightness(1.08)}
+    .quiz{margin-top:18px;background:#fff;border:2px dashed #cfeeff;border-radius:16px;padding:14px}
+    .q{margin:10px 0}
+    .phet{background:#fff;border:2px solid #d9eefb;border-radius:16px;padding:16px}
+    .phet-frame{position:relative;width:100%;height:560px;border-radius:12px;overflow:hidden}
+    iframe.phet-embed{width:100%;height:100%;border:0;display:block}
+    .warn{background:#fffceb;border:1px solid #ffe08a;border-radius:10px;padding:10px}
+    .pulse{position:relative}
+    .pulse::after{content:"";position:absolute;inset:-8px;border:2px solid #cfeeff;border-radius:999px;opacity:.6;animation:pulse 1.8s ease-out infinite}
+    @keyframes pulse{0%{transform:scale(.85);opacity:.6}70%{transform:scale(1.15);opacity:0}100%{transform:scale(1.15);opacity:0}}
+    .mini{font-size:12px;color:#4d6b80}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Physics • Chapter 8: Force and Laws of Motion</h1>
+    <div class="tag">Newton’s 1st, 2nd, 3rd • Inertia • Momentum • Impulse • Conservation of Momentum</div>
+
+    <div class="grid">
+      <!-- Story / Overview -->
+      <section>
+        <div class="speech" id="speech"></div>
+        <div class="controls">
+          <button id="btnPrev" class="ghost">◁ Prev</button>
+          <button id="btnNext">Next ▷</button>
+          <button id="btnEnable" class="ghost">🔊 Enable Audio</button>
+          <button id="btnSpeak">▶ Narrate (Male)</button>
+          <span class="muted" id="lineInfo"></span>
+        </div>
+      </section>
+
+      <!-- Zoomable Explorer -->
+      <section class="sim">
+        <h3>Lab: Laws of Motion Explorer</h3>
+        <div class="panel">
+          <div class="side">
+            <div class="row"><h4>Choose Board</h4>
+              <select id="boardType" style="padding:8px;border:2px solid #cfeeff;border-radius:10px;font-weight:700;color:#0b3b5a">
+                <option value="first">First Law (Inertia)</option>
+                <option value="second">Second Law (F = m a)</option>
+                <option value="third">Third Law (Action–Reaction)</option>
+                <option value="momentum">Momentum & Impulse</option>
+                <option value="conserve">Conservation of Momentum</option>
+              </select>
+            </div>
+            <div class="row" style="margin-top:8px"><span class="pill">Zoom: <span id="zoomLabel">100%</span></span>
+              <input id="zoom" type="range" min="80" max="200" value="100" step="5">
+            </div>
+            <div class="legend">
+              <span class="pill">Tap items → hear + learn</span>
+              <button id="btnCenter" class="ghost">🎯 Center</button>
+              <button id="btnMute" class="ghost">🔇 Mute</button>
+            </div>
+            <div class="side" id="infoBox" style="margin-top:10px">
+              <h4 id="orgName">Tap an item</h4>
+              <div id="orgDesc" class="muted">I will tell you what it means.</div>
+              <div class="controls" style="margin-top:8px"><button id="orgSpeak" class="ghost">▶ Speak</button></div>
+            </div>
+
+            <div class="list" id="legendList"></div>
+          </div>
+
+          <div class="explorer" id="explorer">
+            <div class="viewport" id="viewport">
+              <svg id="boardSVG" viewBox="0 0 1100 760" width="1100" height="760" aria-label="Laws of motion boards"></svg>
+            </div>
+          </div>
+        </div>
+        <p class="muted">Tip: Use the slider to zoom. Drag the background to pan. Tap a card or vector to hear and learn. Switch boards from the dropdown.</p>
+      </section>
+
+      <!-- PhET Collision Lab (online + fallbacks) -->
+      <section class="phet">
+        <h3>Interactive: PhET — Collision Lab</h3>
+        <div class="phet-frame">
+          <iframe
+            id="phetFrame"
+            class="phet-embed"
+            title="PhET Collision Lab"
+            src="https://phet.colorado.edu/sims/html/collision-lab/latest/collision-lab_en.html"
+            allow="fullscreen; gamepad; xr-spatial-tracking; clipboard-read; clipboard-write"
+            sandbox="allow-scripts allow-forms allow-same-origin allow-pointer-lock allow-popups allow-downloads"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        <div class="controls" style="margin-top:10px">
+          <button id="btnPhETNewTab" class="ghost">🔗 Open in New Tab (if blocked)</button>
+          <button id="btnPhETLocal" class="ghost" title="Use a local copy you downloaded">💾 Use Local Copy</button>
+          <span id="phetStatus" class="muted"></span>
+        </div>
+        <div class="warn" style="margin-top:10px">
+          Offline? Download the HTML5 sim and serve it via a local HTTP server. Example:
+          <code>http://127.0.0.1/phet/collision-lab_en.html</code> (iframes from <code>file://</code> are blocked).
+        </div>
+      </section>
+
+      <!-- Mini Interactive (offline srcdoc) — 2-carts momentum -->
+      <section class="phet">
+        <h3>Mini Interactive: Two Carts (Momentum & Elasticity)</h3>
+        <div class="phet-frame">
+          <iframe class="phet-embed" title="Two carts mini" srcdoc='<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:system-ui;margin:0;padding:14px;color:#0b3b5a;background:#fff} .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap} .card{border:1px solid #cfeeff;border-radius:12px;padding:12px;margin-top:10px} input[type=range]{width:220px} canvas{border:1px solid #cfeeff;border-radius:8px;background:#fff} .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#eef7ff;border:1px solid #cfeeff} .mini{font-size:12px;color:#4d6b80} </style></head><body><div class="row"><label>m1 (kg): <input id="m1" type="range" min="1" max="10" value="3"></label><span class="pill" id="m1v">3</span><label>v1 (m/s): <input id="v1" type="range" min="-10" max="10" value="3"></label><span class="pill" id="v1v">3</span></div><div class="row"><label>m2 (kg): <input id="m2" type="range" min="1" max="10" value="4"></label><span class="pill" id="m2v">4</span><label>v2 (m/s): <input id="v2" type="range" min="-10" max="10" value="-1"></label><span class="pill" id="v2v">-1</span></div><div class="row"><label>Elasticity e (0 inelastic → 1 elastic): <input id="e" type="range" min="0" max="100" value="100"></label><span class="pill" id="ev">1.00</span></div><div class="card"><b>p_before</b> = <span id="pb">0.00</span> kg·m/s • <b>p_after</b> = <span id="pa">0.00</span> kg·m/s</div><canvas id="cv" width="680" height="220"></canvas><p class="mini">Conservation of momentum: p_before = p_after (subject to rounding). Elasticity controls kinetic energy loss.</p><script>const $=id=>document.getElementById(id); const cv=$("cv"); const ctx=cv.getContext("2d"); let running=true; let x1=140,x2=520; function compute(){const m1=+$("m1").value, m2=+$("m2").value, v1=+$("v1").value, v2=+$("v2").value, e=(+$("e").value)/100; $("m1v").textContent=m1; $("m2v").textContent=m2; $("v1v").textContent=v1; $("v2v").textContent=v2; $("ev").textContent=e.toFixed(2); const pb=m1*v1+m2*v2; let u1=v1, u2=v2; // relative speed after = e * relative speed before
+const v1p=(m1*u1 + m2*u2 - m2*e*(u1-u2))/(m1+m2); const v2p=(m1*u1 + m2*u2 + m1*e*(u1-u2))/(m1+m2); $("pb").textContent=pb.toFixed(2); $("pa").textContent=(m1*v1p+m2*v2p).toFixed(2); return {m1,m2,u1,u2,v1p,v2p,e}; }
+function draw(st){ctx.clearRect(0,0,cv.width,cv.height); ctx.fillStyle="#eef7ff"; ctx.fillRect(0,150,680,50); ctx.fillStyle="#0b3b5a"; ctx.strokeStyle="#0b3b5a"; ctx.lineWidth=2; ctx.strokeRect(x1-20,120,40,40); ctx.strokeRect(x2-20,120,40,40); ctx.fillText("m1", x1-10, 115); ctx.fillText("m2", x2-10, 115); }
+let state=compute(); function step(){ if(!running) return; draw(state); x1 += state.u1*0.5; x2 += state.u2*0.5; if ((x2 - x1) < 40){ // collide
+  running=false; // compute post-collision
+  state=compute(); state.u1=state.v1p; state.u2=state.v2p; setTimeout(()=>{ running=true; }, 400);
+}
+ requestAnimationFrame(step);} ["m1","m2","v1","v2","e"].forEach(id=>$(id).addEventListener("input",()=>{ x1=140; x2=520; state=compute(); })); state=compute(); step(); </script></body></html>'></iframe>
+        </div>
+      </section>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz"></section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ----------------------
+// Story lines
+// ----------------------
+const LINES = [
+  "First Law: Objects keep their state of rest or uniform straight-line motion unless a net external force acts.",
+  "Second Law: The acceleration of a body is directly proportional to the net force and inversely proportional to its mass (F = m a).",
+  "Third Law: For every action, there is an equal and opposite reaction, acting on different bodies.",
+  "Momentum p = m v. Impulse J = F Δt = Δp links force and time to change in momentum.",
+  "In an isolated system, total momentum is conserved during interactions like collisions and explosions."
+];
+
+// ----------------------
+// Quiz bank
+// ----------------------
+const QUIZ = [
+  {q:"Which statement is Newton's First Law?",a:["F = m a","Action equals reaction","A body continues in its state unless acted upon"],correct:2},
+  {q:"If net force doubles and mass is same, acceleration…",a:["Doubles","Halves","Stays same"],correct:0},
+  {q:"In a gun–bullet system, recoil is explained by…",a:["Conservation of momentum","Increase in mass","Zero force"],correct:0},
+  {q:"Impulse equals…",a:["m a","F/Δt","Change in momentum"],correct:2},
+  {q:"Two skaters push off each other; they move apart because…",a:["First Law","Second Law","Third Law"],correct:2}
+];
+
+// ----------------------
+// TTS (male-preferred) with priming
+// ----------------------
+let currentIdx = 0; let voices = []; let muted=false; let audioEnabled=false;
+const speechBox = document.getElementById('speech');
+const lineInfo = document.getElementById('lineInfo');
+const btnSpeak = document.getElementById('btnSpeak');
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+const btnMute = document.getElementById('btnMute');
+const btnEnable = document.getElementById('btnEnable');
+
+function renderLine(){ speechBox.textContent = LINES[currentIdx]; lineInfo.textContent = `Line ${currentIdx+1} of ${LINES.length}`; }
+function loadVoices(){ try{ voices = window.speechSynthesis.getVoices(); }catch(e){ voices = []; } }
+function pickMaleVoice(){ if(!voices.length) return null; const pref=/(male|daniel|george|brian|english male|barry|david|microsoft|google uk|alex)/i; const en=v=>/en/i.test(v.lang||""); return voices.find(v=>pref.test((v.name||"")+" "+(v.lang||""))&&en(v)) || voices.find(en) || voices[0]; }
+function speak(text){ if(muted || !audioEnabled) return; if(!('speechSynthesis' in window)) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); loadVoices(); const v=pickMaleVoice(); if(v) u.voice=v; u.pitch=1.0; u.rate=1.03; window.speechSynthesis.speak(u);}catch(e){} }
+if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=()=>{ loadVoices(); }; }
+btnEnable.addEventListener('click', ()=>{ audioEnabled = true; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance("Audio enabled."); const v=pickMaleVoice(); if(v) u.voice=v; window.speechSynthesis.speak(u);}catch(e){} btnEnable.textContent = "✅ Audio On"; });
+btnSpeak.addEventListener('click', ()=>{ speak(LINES[currentIdx]); });
+btnNext.addEventListener('click', ()=>{ if(currentIdx<LINES.length-1){ currentIdx++; renderLine(); } });
+btnPrev.addEventListener('click', ()=>{ if(currentIdx>0){ currentIdx--; renderLine(); } });
+btnMute.addEventListener('click', ()=>{ muted=!muted; btnMute.textContent = muted? '🔊 Unmute' : '🔇 Mute'; if(muted){ try{ window.speechSynthesis.cancel(); }catch(e){} } });
+
+// ----------------------
+// Build Quiz
+// ----------------------
+const qz = document.getElementById('quiz');
+function buildQuiz(){ let html = '<h3>Quiz Time! 🎉</h3>'; QUIZ.forEach((item,i)=>{ html += `<div class="q"><b>${i+1}. ${item.q}</b><div>`; item.a.forEach((opt,j)=>{ html += `<label style="display:block;margin:.25rem 0"><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`; }); html += '</div></div>'; }); html += `<div class='controls'><button id='btnCheck' class='good'>Check Answers</button><button id='btnReset' class='ghost'>Reset</button><span id='result' class='muted'></span></div>`; qz.innerHTML = html; document.getElementById('btnCheck').addEventListener('click', checkQuiz); document.getElementById('btnReset').addEventListener('click', ()=>{ qz.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false); document.getElementById('result').textContent=''; }); }
+function checkQuiz(){ let score=0; let answered=0; QUIZ.forEach((item,i)=>{ const chosen=qz.querySelector(`input[name='q${i}']:checked`); if(chosen){answered++; if(Number(chosen.value)===item.correct) score++;} }); const r=document.getElementById('result'); if(answered<QUIZ.length){ r.textContent='Pick an answer for each question.'; return; } r.textContent=(score===QUIZ.length)?'🌟 Perfect! Laws of motion ace!':`Nice! You got ${score} of ${QUIZ.length}.`; }
+
+// ----------------------
+// Explorer (pan, zoom, tap)
+// ----------------------
+const explorer = document.getElementById('explorer');
+const viewport = document.getElementById('viewport');
+const zoom = document.getElementById('zoom');
+const zoomLabel = document.getElementById('zoomLabel');
+const btnCenter = document.getElementById('btnCenter');
+const orgName = document.getElementById('orgName');
+const orgDesc = document.getElementById('orgDesc');
+const orgSpeak = document.getElementById('orgSpeak');
+const boardType = document.getElementById('boardType');
+const svg = document.getElementById('boardSVG');
+const legendList = document.getElementById('legendList');
+
+let pan = {x:0,y:0}; let scale = 1;
+function applyTransform(){ viewport.style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${scale})`; }
+zoom.addEventListener('input', ()=>{ scale = Number(zoom.value)/100; zoomLabel.textContent = `${zoom.value}%`; applyTransform(); });
+btnCenter.addEventListener('click', ()=>{ pan.x = (explorer.clientWidth-1100*scale)/2; pan.y = (explorer.clientHeight-760*scale)/2; applyTransform(); });
+window.addEventListener('resize', ()=> btnCenter.click());
+
+let panning=false, sx=0, sy=0, ox=0, oy=0;
+explorer.addEventListener('pointerdown', e=>{ if(e.target.closest('.org')) return; panning=true; sx=e.clientX; sy=e.clientY; ox=pan.x; oy=pan.y; explorer.setPointerCapture(e.pointerId); });
+explorer.addEventListener('pointermove', e=>{ if(!panning) return; const dx=e.clientX-sx, dy=e.clientY-sy; pan.x = ox + dx; pan.y = oy + dy; applyTransform(); });
+explorer.addEventListener('pointerup', e=>{ if(panning){ explorer.releasePointerCapture(e.pointerId); } panning=false; });
+
+// ----------------------
+// Boards (SVG) and data
+// ----------------------
+const INFO = {
+  // First law
+  inertia:{name:'Inertia',desc:'Resistance of a body to changes in its state of motion; proportional to mass.'},
+  uniform:{name:'Uniform Motion',desc:'With zero net force, velocity remains constant in magnitude and direction.'},
+  seatbelt:{name:'Seatbelt Example',desc:'Car stops, body tends to keep moving forward — seatbelts provide the external force to stop you.'},
+  // Second law
+  fma:{name:'F = m a',desc:'Net force equals mass times acceleration; direction of a is direction of net force.'},
+  units:{name:'Units',desc:'Force in newtons (N) where 1 N = 1 kg·m/s².'},
+  doubling:{name:'Effect of Doubling',desc:'Double F → double a. Double m → half a, for the same net force.'},
+  // Third law
+  action:{name:'Action–Reaction',desc:'Forces in pairs, equal in magnitude, opposite in direction, on different bodies.'},
+  recoil:{name:'Recoil',desc:'Bullet gains forward momentum, gun gains equal backward momentum (smaller speed due to larger mass).'},
+  walking:{name:'Walking',desc:'You push the ground backward; ground pushes you forward — you move.'},
+  // Momentum & impulse
+  momentum:{name:'Momentum',desc:'p = m v; vector; SI unit kg·m/s.'},
+  impulse:{name:'Impulse',desc:'J = F Δt = Δp. Larger time reduces peak force for same momentum change (crumple zones).'},
+  // Conservation
+  closed:{name:'Closed System',desc:'When external net force is zero, total momentum remains constant.'},
+  elastic:{name:'Elastic vs Inelastic',desc:'Momentum is conserved in both; kinetic energy is conserved only in perfectly elastic collisions.'},
+  rocket:{name:'Rocket',desc:'Exhaust gases backward, rocket forward — momentum of system conserved.'}
+};
+
+const LEGENDS = {
+  first:['Inertia','Uniform Motion','Seatbelt'],
+  second:['F = m a','Units','Effect of Doubling'],
+  third:['Action–Reaction','Recoil','Walking'],
+  momentum:['Momentum','Impulse'],
+  conserve:['Closed System','Elastic vs Inelastic','Rocket']
+};
+
+function card(x,y,title,key){ return `
+  <g class="org" data-key="${key}" role="button" tabindex="0" transform="translate(${x},${y})">
+    <rect width="320" height="160" rx="18" fill="#ffffff" stroke="#cfeeff" />
+    <text x="16" y="36" font-size="18" font-weight="700" fill="#0b3b5a">${title}</text>
+    <text x="16" y="68" font-size="14" fill="#4d6b80">Tap to hear what it means</text>
+  </g>`; }
+
+function makeFirst(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g1)"/>
+  <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Inertia','inertia')}
+  ${card(420,80,'Uniform Motion','uniform')}
+  ${card(60,280,'Seatbelt Example','seatbelt')}
+  `; }
+
+function makeSecond(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g2)"/>
+  <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'F = m a','fma')}
+  ${card(420,80,'Units','units')}
+  ${card(60,280,'Effect of Doubling','doubling')}
+  `; }
+
+function makeThird(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g3)"/>
+  <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Action–Reaction','action')}
+  ${card(420,80,'Recoil','recoil')}
+  ${card(60,280,'Walking','walking')}
+  `; }
+
+function makeMomentum(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g4)"/>
+  <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Momentum','momentum')}
+  ${card(420,80,'Impulse','impulse')}
+  `; }
+
+function makeConserve(){ return `
+  <rect x="0" y="0" width="1100" height="760" fill="url(#g5)"/>
+  <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f7fbff"/><stop offset="100%" stop-color="#e9f6ff"/></linearGradient></defs>
+  ${card(60,80,'Closed System','closed')}
+  ${card(420,80,'Elastic vs Inelastic','elastic')}
+  ${card(60,280,'Rocket','rocket')}
+  `; }
+
+function renderBoard(){ const t = boardType.value; let inner=''; if(t==='first') inner = makeFirst(); if(t==='second') inner = makeSecond(); if(t==='third') inner = makeThird(); if(t==='momentum') inner = makeMomentum(); if(t==='conserve') inner = makeConserve(); svg.innerHTML = inner; buildLegend(t); }
+function buildLegend(t){ const items = LEGENDS[t]||[]; legendList.innerHTML = items.map(x=>`<span class="pill">${x}</span>`).join(''); }
+
+// Delegated taps
+svg.addEventListener('click', e=>{ const t=e.target.closest('.org'); if(!t) return; const key=t.getAttribute('data-key'); say(key); });
+svg.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ const t=e.target.closest('.org'); if(t){ e.preventDefault(); say(t.getAttribute('data-key')); } } });
+function say(key){ const d=INFO[key]; if(!d) return; orgName.textContent=d.name; orgDesc.textContent=d.desc; speak(`${d.name}. ${d.desc}`); }
+orgSpeak.addEventListener('click', ()=>{ if(orgName.textContent && orgDesc.textContent){ speak(`${orgName.textContent}. ${orgDesc.textContent}`); } });
+boardType.addEventListener('change', renderBoard);
+
+// ----------------------
+// PhET controls (online + local)
+// ----------------------
+const phetURL = "https://phet.colorado.edu/sims/html/collision-lab/latest/collision-lab_en.html";
+const phetFrame = document.getElementById("phetFrame");
+const phetStatus = document.getElementById("phetStatus");
+(document.getElementById("btnPhETNewTab")||{}).onclick = ()=> window.open(phetURL, "_blank");
+(document.getElementById("btnPhETLocal")||{}).onclick = ()=>{ const localURL = "http://127.0.0.1/phet/collision-lab_en.html"; phetFrame.src = localURL; phetStatus.textContent = "Switched to local copy."; };
+setTimeout(()=>{ phetStatus.textContent = "If the panel is blank, click Open in New Tab or Use Local Copy."; }, 2500);
+
+// ----------------------
+// Init
+// ----------------------
+function init(){ renderLine(); buildQuiz(); renderBoard(); btnCenter.click(); }
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

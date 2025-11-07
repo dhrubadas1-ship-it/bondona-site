@@ -1,0 +1,5 @@
+[R1] Force — Key Points
+• Force is a push or pull; vector; can change state of motion or shape.
+• Balanced forces → no change in motion; unbalanced forces → acceleration.
+• Types: Contact (friction, tension, normal); Non-contact (gravitational, electrostatic, magnetic).
+• Net force relates to acceleration via Newton’s second law (see Ch 8).
